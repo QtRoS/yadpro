@@ -1,0 +1,193 @@
+import QtQuick 2.3
+import U1db 1.0 as U1db
+
+QtObject {
+
+    property bool showFileTime
+    property bool useGridView
+    property bool downloadInBrowser
+    property string sortOrder
+    property string token
+
+    Component.onCompleted: {
+        showFileTime = getShowFileTime()
+        useGridView = getUseGridView()
+        downloadInBrowser = getDownloadInBrowser()
+        sortOrder = getSortOrder()
+        token = getToken()
+    }
+
+    onShowFileTimeChanged: {
+        setShowFileTime(showFileTime)
+    }
+
+    onUseGridViewChanged: {
+        setUseGridView(useGridView)
+    }
+
+    onDownloadInBrowserChanged: {
+        setDownloadInBrowser(downloadInBrowser)
+    }
+
+    onSortOrderChanged: {
+        setSortOrder(sortOrder)
+    }
+
+    onTokenChanged: {
+        setToken(token)
+    }
+
+    function getUseGridView() {
+        return settingsDocument.contents.useGridView
+    }
+
+    function setUseGridView(value) {
+        if (!value)
+            value = ""
+        var cont = settingsDocument.contents
+        cont.useGridView = value
+        settingsDocument.contents = cont
+    }
+
+    function getShowFileTime() {
+        return settingsDocument.contents.showFileTime
+    }
+
+    function setShowFileTime(value) {
+        if (!value)
+            value = ""
+        var cont = settingsDocument.contents
+        cont.showFileTime = value
+        settingsDocument.contents = cont
+    }
+
+    function getDownloadInBrowser() {
+        return settingsDocument.contents.downloadInBrowser
+    }
+
+    function setDownloadInBrowser(value) {
+        if (!value)
+            value = ""
+        var cont = settingsDocument.contents
+        cont.downloadInBrowser = value
+        settingsDocument.contents = cont
+    }
+
+    function getSortOrder() {
+        return settingsDocument.contents.sortOrder
+    }
+
+    function setSortOrder(value) {
+        var cont = settingsDocument.contents
+        cont.sortOrder = value
+        settingsDocument.contents = cont
+    }
+
+    function getToken() {
+        return settingsDocument.contents.token
+    }
+
+    function setToken(value) {
+        var cont = settingsDocument.contents
+        cont.token = value
+        settingsDocument.contents = cont
+    }
+
+    property var db: U1db.Database {
+            id: settingsDataBase
+            path: "ShortsSettings"
+        }
+
+    property var document: U1db.Document {
+        id: settingsDocument
+        database: settingsDataBase
+        docId: 'settingsDocument'
+        create: true
+        defaults: { "showFileTime" : false, "useGridView" : true, "token" : "73d24f778cdf4b0f80a3247dce20e937",
+                    "downloadInBrowser" : false, "sortOrder" : "name" }
+    }
+}
+
+//import QtQuick 2.3
+//import "../utils/DataBase.js" as DB
+
+///* New interface for options.
+// * Currently it is just facade on DB logic.
+// */
+//Item {
+
+//    property bool showFileTime
+//    property bool useGridView
+//    property bool downloadInBrowser
+//    property string sortOrder
+
+//    Component.onCompleted: {
+//        showFileTime = getShowFileTime()
+//        useGridView = getUseGridView()
+//        downloadInBrowser = getDownloadInBrowser()
+//        sortOrder = getSortOrder()
+//    }
+
+//    onShowFileTimeChanged: {
+//        setShowFileTime(showFileTime)
+//    }
+
+//    onUseGridViewChanged: {
+//        setUseGridView(useGridView)
+//    }
+
+//    onDownloadInBrowserChanged: {
+//        setDownloadInBrowser(downloadInBrowser)
+//    }
+
+//    onSortOrderChanged: {
+//        setSortOrder(sortOrder)
+//    }
+
+//    function getUseGridView() {
+//        return DB.getValue("useGridView")
+//    }
+
+//    function setUseGridView(value) {
+//        if (!value)
+//            value = ""
+//        DB.setValue("useGridView", value)
+//    }
+
+//    function getShowFileTime() {
+//        return DB.getValue("showFileTime")
+//    }
+
+//    function setShowFileTime(value) {
+//        if (!value)
+//            value = ""
+//        DB.setValue("showFileTime", value)
+//    }
+
+//    function getDownloadInBrowser() {
+//        return DB.getValue("downloadInBrowser")
+//    }
+
+//    function setDownloadInBrowser(value) {
+//        if (!value)
+//            value = ""
+//        DB.setValue("downloadInBrowser", value)
+//    }
+
+//    function getSortOrder() {
+//        return DB.getValue("sortOrder")
+//    }
+
+//    function setSortOrder(value) {
+//        DB.setValue("sortOrder", value)
+//    }
+
+//    function token() {
+//        return DB.getValue("token")
+//    }
+
+//    function setToken(value) {
+//        DB.setValue("token", value)
+//    }
+//} // QtObject
+

@@ -1,0 +1,15 @@
+{
+    "name": "yadpro.qtros",
+    "description": "Pro version of YaD - unofficial Yandex.Disk client for Ubuntu Phone.",
+    "architecture": "@CLICK_ARCH@",
+    "title": "YaD Pro",
+    "hooks": {
+        "yadpro": {
+            "apparmor": "yadpro/yadpro.apparmor",
+            "desktop": "yadpro/yadpro.desktop"
+        }
+    },
+    "version": "0.1",
+    "maintainer": "Roman Shchekin <mrqtros@gmail.com>",
+    "framework": "ubuntu-sdk-14.10"
+}
