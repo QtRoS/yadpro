@@ -165,6 +165,7 @@ QtObject {
                 }
 
                 currentFolder = __checkPath(r.path)
+                var downloadOnMiss = optKeep.downloadPreviews
 
                 dirModel.clear()
                 var items = r._embedded.items
@@ -190,7 +191,7 @@ QtObject {
                     }
 
                     if (o.preview)
-                        o.preview = previewCache.getByPreview(o.preview)
+                        o.preview = previewCache.getByPreview(o.preview, downloadOnMiss)
 
                     o["iconSource"] = o.isFolder ? "/img/qml/images/folder.png" :
                                                  (o.preview ? o.preview : JS.getImageByFileType(o.displayName))
@@ -216,12 +217,11 @@ QtObject {
                     if (optKeep.downloadInBrowser) {
                         Qt.openUrlExternally(resObj.response.href)
                     } else {
-                        networkManager
-//                        var headers = downloader.headers
-//                        if (headers)
-//                            headers["Authorization"] = "OAuth " + yadApi.accessToken
+                        var headers = downloader.headers
+                        if (headers)
+                            headers["Authorization"] = "OAuth " + yadApi.accessToken
 
-//                        downloader.download(resObj.response.href)
+                        downloader.download(resObj.response.href)
                     }
                 }
             }

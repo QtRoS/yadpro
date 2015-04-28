@@ -6,6 +6,7 @@ QtObject {
     property bool showFileTime
     property bool useGridView
     property bool downloadInBrowser
+    property bool downloadPreviews
     property string sortOrder
     property string token
 
@@ -15,6 +16,7 @@ QtObject {
         downloadInBrowser = getDownloadInBrowser()
         sortOrder = getSortOrder()
         token = getToken()
+        downloadPreviews = getDownloadPreviews()
     }
 
     onShowFileTimeChanged: {
@@ -35,6 +37,10 @@ QtObject {
 
     onTokenChanged: {
         setToken(token)
+    }
+
+    onDownloadPreviewsChanged: {
+        setDownloadPreviews(downloadPreviews)
     }
 
     function getUseGridView() {
@@ -93,6 +99,16 @@ QtObject {
         settingsDocument.contents = cont
     }
 
+    function getDownloadPreviews() {
+        return settingsDocument.contents.downloadPreviews
+    }
+
+    function setDownloadPreviews(value) {
+        var cont = settingsDocument.contents
+        cont.downloadPreviews = value
+        settingsDocument.contents = cont
+    }
+
     property var db: U1db.Database {
             id: settingsDataBase
             path: "ShortsSettings"
@@ -103,8 +119,8 @@ QtObject {
         database: settingsDataBase
         docId: 'settingsDocument'
         create: true
-        defaults: { "showFileTime" : false, "useGridView" : true, "token" : "73d24f778cdf4b0f80a3247dce20e937",
-                    "downloadInBrowser" : false, "sortOrder" : "name" }
+        defaults: { "showFileTime" : true, "useGridView" : true, "token" : "73d24f778cdf4b0f80a3247dce20e937",
+                    "downloadInBrowser" : false, "sortOrder" : "name", "downloadPreviews" : true }
     }
 }
 

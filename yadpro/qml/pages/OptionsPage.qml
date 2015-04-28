@@ -1,6 +1,6 @@
 /*
     YaD - unofficial Yandex.Disk client for Ubuntu Phone.
-    Copyright (C) 2013  Roman Shchekin aka QtRoS
+    Copyright (C) 2015  Roman Shchekin aka QtRoS
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ Page {
         chbDefDir.checked = optKeep.downloadInBrowser
         swUseGridView.checked = optKeep.useGridView
         swShowFileTime.checked = optKeep.showFileTime
+        swDownloadPreviews.checked = optKeep.downloadPreviews
         isSortOrder.selectItemByValue(optKeep.sortOrder)
 
         pageItself.preventSave = false
@@ -44,29 +45,6 @@ Page {
         id: contentColumn
 
         width: parent.width
-
-        ListItem.Standard {
-            id: useDefListItem
-
-            text: i18n.tr("Download in browser")
-            width: parent.width
-            control: Switch {
-                id: chbDefDir
-
-                anchors.right: parent.right
-
-                onCheckedChanged: {
-                    if (pageItself.preventSave)
-                        return
-
-                    optKeep.downloadInBrowser = checked
-
-                    if (checked)
-                        PopupUtils.open(compDialog)
-                }
-            }
-        }
-
 
         ListItem.Standard {
             id: gridListItem
@@ -90,7 +68,7 @@ Page {
         ListItem.Standard {
             id: fileTimeListItem
 
-            text: i18n.tr("Show file time")
+            text: i18n.tr("Show file time (in list)")
             width: parent.width
             control: Switch {
                 id: swShowFileTime
@@ -102,6 +80,47 @@ Page {
                         return
 
                     optKeep.showFileTime = checked
+                }
+            }
+        }
+
+        ListItem.Standard {
+            id: downloadPreviewsListItem
+
+            text: i18n.tr("Download previews")
+            width: parent.width
+            control: Switch {
+                id: swDownloadPreviews
+
+                anchors.right: parent.right
+
+                onCheckedChanged: {
+                    if (pageItself.preventSave)
+                        return
+
+                    optKeep.downloadPreviews = checked
+                }
+            }
+        }
+
+        ListItem.Standard {
+            id: useDefListItem
+
+            text: i18n.tr("Download in browser")
+            width: parent.width
+            control: Switch {
+                id: chbDefDir
+
+                anchors.right: parent.right
+
+                onCheckedChanged: {
+                    if (pageItself.preventSave)
+                        return
+
+                    optKeep.downloadInBrowser = checked
+
+                    if (checked)
+                        PopupUtils.open(compDialog)
                 }
             }
         }

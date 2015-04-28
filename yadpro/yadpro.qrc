@@ -21,6 +21,7 @@
         <file>qml/popups/SaveToDiskDialog.qml</file>
         <file>qml/popups/SignOutDialog.qml</file>
         <file>qml/popups/TransferDialog.qml</file>
+        <file>qml/components/PreviewNotificationBar.qml</file>
     </qresource>
     <qresource prefix="/img">
         <file>qml/images/audio.png</file>

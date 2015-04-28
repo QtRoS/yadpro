@@ -1,5 +1,6 @@
 [Desktop Entry]
-Name=yadpro
+Name=YaD Pro
+Comment=Unofficial Yandex.Disk client
 Exec=yadpro
 Icon=yadpro/yadpro.png
 Terminal=false

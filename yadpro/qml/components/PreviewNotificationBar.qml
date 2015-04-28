@@ -19,26 +19,28 @@
 import QtQuick 2.3
 import Ubuntu.Components 1.1
 
-Item {
-    id: miniProgressRoot
+Rectangle {
+    id: previewNotificationRoot
 
-    property int progress: 0
-
-    height: units.gu(0.5)
-    onProgressChanged: {
-        if (progress >= 100)
-            opacity = 0
-        else if (progress > 0)
-            opacity = 1
+    opacity: previewCache.isBusy ? 1 : 0
+    color: "#80000000"
+    anchors {
+        right: parent.right
+        left: parent.left
+        bottom: parent.bottom
     }
+    height: units.gu(2.5)
 
-    Rectangle {
-        anchors {
-            top: parent.top
-            bottom: parent.bottom
+    Label {
+        id: someLabel
+        text: qsTr("Downloading previews...")
+        anchors.centerIn: parent
+        SequentialAnimation {
+            loops: Animation.Infinite
+            running: previewNotificationRoot.opacity == 1
+            UbuntuNumberAnimation { target: someLabel; property: "opacity"; to: 0.4; easing: UbuntuAnimation.StandardEasing; duration: UbuntuAnimation.SlowDuration }
+            UbuntuNumberAnimation { target: someLabel; property: "opacity"; to: 1; easing: UbuntuAnimation.StandardEasing; duration: UbuntuAnimation.SlowDuration }
         }
-        width: parent.width / 100 * progress
-        color: UbuntuColors.orange
     }
 
     Behavior on opacity { UbuntuNumberAnimation {} }

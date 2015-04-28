@@ -1,6 +1,6 @@
 /*
     YaD - unofficial Yandex.Disk client for Ubuntu Phone.
-    Copyright (C) 2013  Roman Shchekin aka QtRoS
+    Copyright (C) 2015  Roman Shchekin aka QtRoS
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 
 import QtQuick 2.3
 import Ubuntu.Components 1.1
-import Ubuntu.Components.Popups 1.0
-// import QtWebKit 3.0
 import Ubuntu.Web 0.2
 import "../"
 
@@ -94,9 +92,6 @@ Page {
                 var match = /access_token=([a-z0-9]+).*expires_in=(\d+)/.exec(url_string)
                 if (match.length >= 2) {
                     authPassed(match[1])
-                } else {
-                    // TODO ERR
-                    // resultReceived( {"error" : i18n.tr("Error while getting access token")} )
                 }
             }
         }

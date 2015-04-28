@@ -1,6 +1,8 @@
 #include "previewcache.h"
 #include <QStandardPaths>
-PreviewCache::PreviewCache(QObject *parent) : QObject(parent)
+PreviewCache::PreviewCache(QObject *parent) :
+    QObject(parent),
+    m_isBusy(false)
 {
     m_cacheLoc = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/";
     qDebug() << "CACHE LOC" << m_cacheLoc;

@@ -36,7 +36,8 @@ OTHER_FILES +=  yadpro.apparmor \
                 qml/Bridge.qml \
                 qml/OptKeep.qml \
                 qml/utils/DataBase.js \
-                qml/utils/JsModule.js
+                qml/utils/JsModule.js \
+    qml/components/PreviewNotificationBar.qml
 
 
 #specify where the config files are installed to

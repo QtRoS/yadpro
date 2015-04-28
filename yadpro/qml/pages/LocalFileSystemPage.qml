@@ -1,6 +1,6 @@
 /*
     YaD - unofficial Yandex.Disk client for Ubuntu Phone.
-    Copyright (C) 2013  Roman Shchekin aka QtRoS
+    Copyright (C) 2015  Roman Shchekin aka QtRoS
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
