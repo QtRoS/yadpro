@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=yadpro
+Exec=yadpro
+Icon=yadpro/yadpro.png
+Terminal=false
+Type=Application
+X-Ubuntu-Touch=true
+
