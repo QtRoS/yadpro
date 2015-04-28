@@ -9,15 +9,22 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QFile>
+#include <QHash>
 #include <QFileInfo>
 #include <QDir>
 
-/* TODO
- * 1. Create a queue of requests.
- * 2. Download previews one by one from queue via m_manager.
- * 3. Save previews in QStandardPaths::CacheLocation with md5 based name.
- * 4. Use hash<url, md5> to speedup md5 getByPreview.
- */
+struct QueueItem
+{
+public:
+    QueueItem(const QString& u, const QString& p)
+    {
+        url = u;
+        localPath = p;
+    }
+
+    QString url;
+    QString localPath;
+};
 
 class PreviewCache : public QObject
 {
@@ -27,41 +34,41 @@ public:
     ~PreviewCache();
 
     Q_PROPERTY(QString token READ token WRITE setToken NOTIFY tokenChanged)
+    Q_PROPERTY(bool isBusy READ isBusy WRITE setIsBusy NOTIFY isBusyChanged)
     Q_INVOKABLE QString getByPreview(const QString& preview, bool downloadOnMiss = true);
 
 public:
     QString token() const;
+    bool isBusy() const;
     void setToken(const QString& t);
+    void setIsBusy(bool v);
 
 signals:
     void operationProgress(qint64 current, qint64 total);
-    void operationFinished(const QString& status);
     void tokenChanged();
-
-
-public slots:
+    void isBusyChanged();
 
 private slots:
     void slotDownloadDataAvailable();
     void slotError(QNetworkReply::NetworkError code);
     void slotFinished();
 
-
-
 private:
     void makeRequest(const QString& url);
-
-    void requestNextPreview();
+    void downloadNext();
 
     QNetworkAccessManager m_manager;
-
     QString m_token;
 
+    QString m_cacheLoc;
+    QHash<QString, QString> m_hash; // <PreviewUrl, MD5>
+    bool m_isBusy;
 
     QFile m_file;
     QNetworkReply* m_reply;
-    QQueue<QString> m_queue;
-
+    QQueue<QueueItem> m_queue;
 };
+
+
 
 #endif // PREVIEWCACHE_H

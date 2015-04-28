@@ -34,7 +34,7 @@ MainView {
     objectName: "mainView"
     
     // Note! applicationName needs to match the .desktop filename
-    applicationName: "yadpro.qtros"
+    applicationName: "yadpro"
 
     useDeprecatedToolbar: false
     

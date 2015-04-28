@@ -1,10 +1,51 @@
 #include "previewcache.h"
 #include <QStandardPaths>
 PreviewCache::PreviewCache(QObject *parent) : QObject(parent)
-{ }
+{
+    m_cacheLoc = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/";
+    qDebug() << "CACHE LOC" << m_cacheLoc;
+}
 
 PreviewCache::~PreviewCache()
 { }
+
+QString PreviewCache::getByPreview(const QString &preview,  bool downloadOnMiss)
+{
+    // --------------- First (and fastest) way - hash ---------------- //
+
+    bool contains = m_hash.contains(preview);
+    if (contains)
+    {
+        QString ret = m_hash[preview];
+        if (!ret.isEmpty())
+            return QStringLiteral("file:/") + m_cacheLoc + ret;
+    }
+
+    // --------------- Second way - file                    ---------------- //
+
+    QString md5 = QCryptographicHash::hash(preview.toLatin1(), QCryptographicHash::Md5).toHex();
+    QString previewPath = m_cacheLoc + md5;
+
+    QFileInfo fi(previewPath);
+    if (fi.exists() && fi.size() > 0 )
+    {
+        m_hash[preview] = md5;
+        return QStringLiteral("file:/") + previewPath;
+    }
+
+    // --------------- Last way - network                   ---------------- //
+
+    if (!contains && downloadOnMiss)
+    {
+        m_hash[preview] = QStringLiteral("");
+        m_queue.enqueue(QueueItem(preview, previewPath));
+
+        if (!m_isBusy)
+            downloadNext();
+    }
+
+    return QString("");
+}
 
 void PreviewCache::slotDownloadDataAvailable()
 {
@@ -13,10 +54,46 @@ void PreviewCache::slotDownloadDataAvailable()
     qDebug() << "AVAILABLE" << dataLen << "WRITTEN" << written;
 }
 
+void PreviewCache::makeRequest(const QString &url)
+{
+    QUrl reqUrl(url);
+    QNetworkRequest req(reqUrl);
+
+    req.setRawHeader("Authorization", "OAuth " + m_token.toLatin1());
+    m_reply = m_manager.get(req);
+
+    connect(m_reply, SIGNAL(readyRead()),
+            this, SLOT(slotDownloadDataAvailable()));
+
+    connect(m_reply, SIGNAL(finished()),
+            this, SLOT(slotFinished()));
+
+    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
+            this, SLOT(slotError(QNetworkReply::NetworkError)));
+}
+
+void PreviewCache::downloadNext()
+{
+    if (m_queue.isEmpty())
+    {
+        setIsBusy(false);
+        return;
+    }
+
+    setIsBusy(true);
+
+    QueueItem item = m_queue.dequeue();
+
+    m_file.setFileName(item.localPath);
+    if (!m_file.open(QIODevice::Truncate | QIODevice::WriteOnly))
+        qDebug () << "FILE OPEN ERROR:" << item.localPath;
+
+    makeRequest(item.url);
+}
+
 void PreviewCache::slotError(QNetworkReply::NetworkError code)
 {
     qDebug() << "slotError" << code << m_reply->errorString();
-    emit operationFinished("failure");
 }
 
 void PreviewCache::slotFinished()
@@ -36,95 +113,21 @@ void PreviewCache::slotFinished()
     }
     else
     {
-        emit operationFinished("success");    
-        // qDebug() << "operationFinished";
         m_file.close();
-
-        /* Dequeue only after request finish */
-        m_queue.dequeue();
-
-        /* Download next preview from queue */
-        requestNextPreview();
+        downloadNext();
     }
 }
 
-void PreviewCache::makeRequest(const QString &url)
-{
-    QUrl reqUrl(url);
-    QNetworkRequest req(reqUrl);
-    // qDebug() << "  MAKE_REQUEST   " ;
-
-    req.setRawHeader("Authorization", "OAuth " + m_token.toLatin1());
-
-    m_reply = m_manager.get(req);
-
-    connect(m_reply, SIGNAL(readyRead()),
-            this, SLOT(slotDownloadDataAvailable()));
-
-    connect(m_reply, SIGNAL(finished()),
-            this, SLOT(slotFinished()));
-
-    connect(m_reply, SIGNAL(error(QNetworkReply::NetworkError)),
-            this, SLOT(slotError(QNetworkReply::NetworkError)));
-}
-
-void PreviewCache::requestNextPreview()
-{
-    if (m_queue.isEmpty())
-        return;
-
-    QString preview =  m_queue.head();
-
-    QString md5 = QCryptographicHash::hash(preview.toLatin1(), QCryptographicHash::Md5).toHex();
-
-    QString previewPath = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/" + md5;
-
-    m_file.setFileName(previewPath);
-    if (!m_file.open(QIODevice::Truncate | QIODevice::WriteOnly))
-    {
-        qDebug () << "FILE FOR WRITING OPEN ERROR:" << previewPath;
-    }
-
-    makeRequest(preview);
-}
-
-
-QString PreviewCache::getByPreview(const QString &preview,  bool downloadOnMiss)
-{
-    QString md5 = QCryptographicHash::hash(preview.toLatin1(), QCryptographicHash::Md5).toHex();
-    // qDebug() << "---- Preview requested" << md5 << m_token; // << preview;
-
-    QString previewPath = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/" + md5;
-
-    /* Return path to preview if only there is not this request in queue */
-    QFileInfo fileInfo(previewPath);
-
-    bool isExist = fileInfo.exists();
-    bool isOpen = isExist ? (m_file.isOpen() && m_file.fileName() == previewPath) : false;
-    bool isEmpty =  isExist ? (fileInfo.size() == 0) : false;
-
-    if (isExist && !isOpen && !isEmpty)
-    {
-        //qDebug() << "FILE_NAMESTRING: " << previewPath;
-        return "file:/" + previewPath;
-    }
-    else if (downloadOnMiss &&
-            (!isExist || (!isOpen && isEmpty)))
-    {
-        /* Put request in queue */
-        m_queue.enqueue(preview);
-
-        /* Our request - only in queue, make request themselves */
-        if( m_queue.size() == 1)
-            requestNextPreview();
-    }
-
-    return QString("");
-}
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- //
 
 QString PreviewCache::token() const
 {
     return m_token;
+}
+
+bool PreviewCache::isBusy() const
+{
+    return m_isBusy;
 }
 
 void PreviewCache::setToken(const QString &t)
@@ -133,4 +136,8 @@ void PreviewCache::setToken(const QString &t)
     emit tokenChanged();
 }
 
-
+void PreviewCache::setIsBusy(bool v)
+{
+    m_isBusy = v;
+    emit isBusyChanged();
+}
