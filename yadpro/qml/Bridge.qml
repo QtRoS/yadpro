@@ -2,6 +2,7 @@ import QtQuick 2.3
 import Ubuntu.DownloadManager 0.1
 
 import "utils/JsModule.js" as JS
+import YaD.CppUtils 1.0
 
 QtObject {
     id: bridgeObject
@@ -217,11 +218,10 @@ QtObject {
                     if (optKeep.downloadInBrowser) {
                         Qt.openUrlExternally(resObj.response.href)
                     } else {
-                        var headers = downloader.headers
-                        if (headers)
-                            headers["Authorization"] = "OAuth " + yadApi.accessToken
-
-                        downloader.download(resObj.response.href)
+                        var fullFileName = CppUtils.prependWithDownloadsPath(crossTaskStorage.localName)
+                        jobResult.isError = !networkManager.download(resObj.response.href, fullFileName)
+                        jobResult.localName = fullFileName
+                        jobResult.shouldShowTransferDialog = true
                     }
                 }
             }

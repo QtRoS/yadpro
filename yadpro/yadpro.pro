@@ -7,7 +7,8 @@ QT += qml quick
 
 SOURCES += main.cpp \
     networkmanager.cpp \
-    previewcache.cpp
+    previewcache.cpp \
+    cpputils.cpp
 
 RESOURCES += yadpro.qrc
 
@@ -52,5 +53,6 @@ INSTALLS+=target
 
 HEADERS += \
     networkmanager.h \
-    previewcache.h
+    previewcache.h \
+    cpputils.h
 

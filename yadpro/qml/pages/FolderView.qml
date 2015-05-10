@@ -55,6 +55,19 @@ Page {
         PopupUtils.open(compInfoBanner, null, { "text" : text, "title" : title} )
     }
 
+    function showTransferDialog(displayName, localName, isDownload) {
+//        transferDialog.displayName = displayName
+//        transferDialog.localName = localName
+//        transferDialog.isDownload = isDownload
+//        transferDialog.startDialog()
+
+        PopupUtils.open(Qt.resolvedUrl("../popups/TransferDialog.qml"), null,
+                        { "displayName" : displayName,
+                          "isDownload" : isDownload,
+                          "localName" : localName,
+                        })
+    }
+
     head.actions: [
         Action {
             property bool modeIsRefresh: !bridge.isBusy
@@ -88,6 +101,16 @@ Page {
 
             actions: ActionList {
                 id: popoverActionsList
+
+                // file:///home/phablet/.cache/yadpro/YaD/m_45tt1982.jpg
+
+//                Action  {
+//                    text: i18n.tr("TEST");
+//                    onTriggered: {
+//                        // Qt.openUrlExternally("file:///home/phablet/.cache/yadpro/YaD/m_45tt1982.jpg")
+//                        Qt.openUrlExternally("file://home/phablet/.cache/yadpro/YaD/m_45tt1982.jpg")
+//                    }
+//                }
 
                 Action  {
                     text: i18n.tr("Create new folder...");
@@ -244,7 +267,7 @@ Page {
             }
 
             function download() {
-                bridge.slotDownload(selectedItem.href)
+                bridge.slotDownload(selectedItem.href, selectedItem.displayName)
             }
 
             function copy() {
@@ -441,9 +464,11 @@ Page {
                         .arg(JS.decorateFileSize(r.trash_size))
 
                     showInfoBanner(message, i18n.tr("Disk information"))
+                } else if (jobResult.code == "download" && jobResult.shouldShowTransferDialog) {
+                    showTransferDialog(selectedItem.displayName, jobResult.localName, true)
                 }
             } // else
-        }
+        } // jobDone
 
         onOperationProgress: miniProgress.progress = progress
     }

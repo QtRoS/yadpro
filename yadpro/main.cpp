@@ -6,6 +6,7 @@
 #include <QLocale>
 #include <QTranslator>
 
+#include "cpputils.h"
 #include "networkmanager.h"
 #include "previewcache.h"
 
@@ -26,6 +27,7 @@ int main(int argc, char *argv[])
 
     QQuickView view;
     QQmlEngine* eng = view.engine();
+    qmlRegisterSingletonType<CppUtils>("YaD.CppUtils", 1, 0, "CppUtils", CppUtils::cppUtilsSingletoneProvider);
     eng->rootContext()->setContextProperty("networkManager", new NetworkManager());
     eng->rootContext()->setContextProperty("previewCache", new PreviewCache());
     view.setSource(QUrl(QStringLiteral("qrc:///qml/YaD.qml")));

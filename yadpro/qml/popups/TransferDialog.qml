@@ -20,74 +20,94 @@ import QtQuick 2.3
 import Ubuntu.Components 1.1
 import Ubuntu.Components.Popups 1.0
 
-import "../utils/JsModule.js" as JS
-
 Dialog {
     id: rootDialog
 
-    property alias fileName: rootDialog.text
-    property string downloadedFileUrl: ""
-    property bool isDownlaod: true
+    property string displayName
+    property string localName
+    property bool isDownload: false
     property bool isFinished: false
-    property real totalLen: 1
 
-    title: isDownlaod? i18n.tr("Downloading") : i18n.tr("Uploading")
+    title: isDownload? qsTr("Downloading") : qsTr("Uploading")
 
     function stopDialog() {
-
-        if (!isFinished) {
-
-            bridge.slotAbort()
-
-            if (isDownlaod) {
-                bridge.downloadProgress.disconnect(progressChanged)
-            } else {
-                bridge.uploadProgress.disconnect(progressChanged)
-            }
-        }
+        if (!isFinished)
+            networkManager.abort()
 
         rootDialog.hide()
-    }
-
-    function finishWithSuccess() {
-
-        if (isDownlaod) {
-            bridge.downloadProgress.disconnect(progressChanged)
-        } else {
-            bridge.uploadProgress.disconnect(progressChanged)
-        }
-        isFinished = true
     }
 
     function startDialog() {
         isFinished = false
         progressBar.value = 0
 
-        if (isDownlaod) {
-            bridge.downloadProgress.connect(progressChanged)
-        } else {
-            bridge.uploadProgress.connect(progressChanged)
-        }
-
-        rootDialog.show()
+        rootDialog.open()
     }
 
     function progressChanged(current, total) {
-        if (total !== totalLen)
-        {
-            totalLen = total
-            progressBar.maximumValue = total
+        if (total === -1)
+            progressBar.indeterminate = true
+        else progressBar.indeterminate = false
 
-            if (total === -1)
-                progressBar.indeterminate = true
-            else progressBar.indeterminate = false
-        }
-
-        progressBar.value = current
-
-        if (current === total)
-            finishWithSuccess()
+        progressBar.value = current / total
+        // textProgressLabel.text = current + " / " + total
     }
+
+//    function stopDialog() {
+
+//        if (!isFinished) {
+
+//            bridge.slotAbort()
+
+//            if (isDownload) {
+//                bridge.downloadProgress.disconnect(progressChanged)
+//            } else {
+//                bridge.uploadProgress.disconnect(progressChanged)
+//            }
+//        }
+
+//        rootDialog.hide()
+//    }
+
+//    function finishWithSuccess() {
+
+//        if (isDownload) {
+//            bridge.downloadProgress.disconnect(progressChanged)
+//        } else {
+//            bridge.uploadProgress.disconnect(progressChanged)
+//        }
+//        isFinished = true
+//    }
+
+//    function startDialog() {
+//        isFinished = false
+//        progressBar.value = 0
+
+//        if (isDownload) {
+//            bridge.downloadProgress.connect(progressChanged)
+//        } else {
+//            bridge.uploadProgress.connect(progressChanged)
+//        }
+
+//        rootDialog.show()
+//    }
+
+//    function progressChanged(current, total) {
+//        if (total !== totalLen)
+//        {
+//            totalLen = total
+//            progressBar.maximumValue = total
+
+//            if (total === -1)
+//                progressBar.indeterminate = true
+//            else progressBar.indeterminate = false
+//        }
+
+//        progressBar.value = current
+
+//        if (current === total)
+//            finishWithSuccess()
+//    }
 
 
     ProgressBar {
@@ -100,16 +120,17 @@ Dialog {
     Button {
         id: openButton
 
-        visible: isDownlaod
+        visible: isDownload
         enabled: isFinished
 
         text: i18n.tr("Open")
         onClicked: {
+            var downloadedFileUrl = localName
             console.log("OPEN", downloadedFileUrl)
             if (downloadedFileUrl.indexOf("file") !== 0)
                 downloadedFileUrl = "file://" + downloadedFileUrl
             console.log("OPEN", downloadedFileUrl)
-            bridge.slotOpenUrl(downloadedFileUrl)
+            Qt.openUrlExternally(downloadedFileUrl)
             rootDialog.stopDialog()
         }
     }
@@ -120,6 +141,13 @@ Dialog {
         onClicked: {
             stopDialog()
         }
+    }
+
+    Connections {
+        target: networkManager
+
+        onOperationProgress: progressChanged(current, total)
+        onOperationFinished: isFinished = true
     }
 
 }
