@@ -50,65 +50,7 @@ Dialog {
         else progressBar.indeterminate = false
 
         progressBar.value = current / total
-        // textProgressLabel.text = current + " / " + total
     }
-
-//    function stopDialog() {
-
-//        if (!isFinished) {
-
-//            bridge.slotAbort()
-
-//            if (isDownload) {
-//                bridge.downloadProgress.disconnect(progressChanged)
-//            } else {
-//                bridge.uploadProgress.disconnect(progressChanged)
-//            }
-//        }
-
-//        rootDialog.hide()
-//    }
-
-//    function finishWithSuccess() {
-
-//        if (isDownload) {
-//            bridge.downloadProgress.disconnect(progressChanged)
-//        } else {
-//            bridge.uploadProgress.disconnect(progressChanged)
-//        }
-//        isFinished = true
-//    }
-
-//    function startDialog() {
-//        isFinished = false
-//        progressBar.value = 0
-
-//        if (isDownload) {
-//            bridge.downloadProgress.connect(progressChanged)
-//        } else {
-//            bridge.uploadProgress.connect(progressChanged)
-//        }
-
-//        rootDialog.show()
-//    }
-
-//    function progressChanged(current, total) {
-//        if (total !== totalLen)
-//        {
-//            totalLen = total
-//            progressBar.maximumValue = total
-
-//            if (total === -1)
-//                progressBar.indeterminate = true
-//            else progressBar.indeterminate = false
-//        }
-
-//        progressBar.value = current
-
-//        if (current === total)
-//            finishWithSuccess()
-//    }
-
 
     ProgressBar {
         id: progressBar
@@ -126,11 +68,14 @@ Dialog {
         text: i18n.tr("Open")
         onClicked: {
             var downloadedFileUrl = localName
-            console.log("OPEN", downloadedFileUrl)
+
             if (downloadedFileUrl.indexOf("file") !== 0)
                 downloadedFileUrl = "file://" + downloadedFileUrl
+
             console.log("OPEN", downloadedFileUrl)
-            Qt.openUrlExternally(downloadedFileUrl)
+            pageStack.push(Qt.resolvedUrl("../content/OpenWithPage.qml"),
+                           { "fileUrl" : downloadedFileUrl } )
+
             rootDialog.stopDialog()
         }
     }

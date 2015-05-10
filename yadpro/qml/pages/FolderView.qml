@@ -56,11 +56,6 @@ Page {
     }
 
     function showTransferDialog(displayName, localName, isDownload) {
-//        transferDialog.displayName = displayName
-//        transferDialog.localName = localName
-//        transferDialog.isDownload = isDownload
-//        transferDialog.startDialog()
-
         PopupUtils.open(Qt.resolvedUrl("../popups/TransferDialog.qml"), null,
                         { "displayName" : displayName,
                           "isDownload" : isDownload,
@@ -101,16 +96,6 @@ Page {
 
             actions: ActionList {
                 id: popoverActionsList
-
-                // file:///home/phablet/.cache/yadpro/YaD/m_45tt1982.jpg
-
-//                Action  {
-//                    text: i18n.tr("TEST");
-//                    onTriggered: {
-//                        // Qt.openUrlExternally("file:///home/phablet/.cache/yadpro/YaD/m_45tt1982.jpg")
-//                        Qt.openUrlExternally("file://home/phablet/.cache/yadpro/YaD/m_45tt1982.jpg")
-//                    }
-//                }
 
                 Action  {
                     text: i18n.tr("Create new folder...");

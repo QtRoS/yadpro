@@ -6,10 +6,11 @@
     "hooks": {
         "yadpro": {
             "apparmor": "yadpro/yadpro.apparmor",
-            "desktop": "yadpro/yadpro.desktop"
+            "desktop": "yadpro/yadpro.desktop",
+            "content-hub": "yadpro/contenthub.json"
         }
     },
-    "version": "1.6.1",
+    "version": "1.7.1",
     "maintainer": "Roman Shchekin <mrqtros@gmail.com>",
     "framework": "ubuntu-sdk-14.10"
 }

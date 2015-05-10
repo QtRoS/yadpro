@@ -14,6 +14,7 @@ RESOURCES += yadpro.qrc
 
 OTHER_FILES +=  yadpro.apparmor \
                 yadpro.desktop \
+                contenthub.json \
                 yadpro.png \
                 qml/YaD.qml \
                 qml/components/ToolbarButton.qml \
@@ -38,7 +39,9 @@ OTHER_FILES +=  yadpro.apparmor \
                 qml/OptKeep.qml \
                 qml/utils/DataBase.js \
                 qml/utils/JsModule.js \
-    qml/components/PreviewNotificationBar.qml
+    qml/components/PreviewNotificationBar.qml \
+    qml/content/OpenWithPage.qml \
+    qml/content/contenttyperesolver.js
 
 
 #specify where the config files are installed to
