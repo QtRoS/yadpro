@@ -49,7 +49,9 @@ Dialog {
             progressBar.indeterminate = true
         else progressBar.indeterminate = false
 
-        progressBar.value = current / total
+        progressBar.value = total ? current / total : 0
+
+        console.log(" --- PROGRESS ", current, total, progressBar.value)
     }
 
     ProgressBar {
