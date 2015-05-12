@@ -41,7 +41,8 @@ OTHER_FILES +=  yadpro.apparmor \
                 qml/utils/JsModule.js \
     qml/components/PreviewNotificationBar.qml \
     qml/content/OpenWithPage.qml \
-    qml/content/contenttyperesolver.js
+    qml/content/contenttyperesolver.js \
+    qml/content/SelectFromPage.qml
 
 
 #specify where the config files are installed to

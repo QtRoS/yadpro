@@ -110,6 +110,13 @@ QtObject {
         return __makeRequest(baseUrl, "download")
     }
 
+    function upload(path) {
+        if (!path)
+            return
+        var baseUrl = "https://cloud-api.yandex.net/v1/disk/resources/upload?path=" + encodeURIComponent(path)
+        return __makeRequest(baseUrl, "upload")
+    }
+
     function saveToDisk(public_key) {
         if (!public_key)
             return

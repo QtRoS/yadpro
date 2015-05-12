@@ -43,6 +43,14 @@ function decorateTitle(text) {
     return text
 }
 
+function getFileName(fullPath) {
+    var ind = fullPath.lastIndexOf("/")
+    if (ind === -1)
+        return fullPath
+
+    return fullPath.substr(ind + 1)
+}
+
 function endsWith(str, suffix) {
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }

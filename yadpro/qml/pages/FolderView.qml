@@ -135,7 +135,20 @@ Page {
                     text: i18n.tr("Upload...")
                     // enabled: false
                     onTriggered: {
-                        Qt.openUrlExternally("https://disk.yandex.ru/")
+                        // Qt.openUrlExternally("https://disk.yandex.ru/")
+                        pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"), { } )
+
+//                        file:///home/phablet/.cache/yadpro/HubIncoming/21/05.jpg
+//                        var fileToUpload = "/home/qtros/r.rb" // "/home/qtros/WUaK8Tr90sY.jpg"
+//                        console.log("fileToUpload", fileToUpload)
+//                        var shortName = JS.getFileName(fileToUpload)
+//                        console.log("shortName", shortName)
+//                        var path = bridge.currentFolder
+//                        if (JS.endsWith(path, "/"))
+//                            path = path + shortName
+//                        else path = path + "/" + shortName
+//                        console.log("path", path)
+//                        bridge.slotUpload(path, fileToUpload)
                     }
                 }
 
@@ -451,6 +464,8 @@ Page {
                     showInfoBanner(message, i18n.tr("Disk information"))
                 } else if (jobResult.code == "download" && jobResult.shouldShowTransferDialog) {
                     showTransferDialog(selectedItem.displayName, jobResult.localName, true)
+                } else if (jobResult.code == "upload" && jobResult.shouldShowTransferDialog) {
+                    showTransferDialog(jobResult.localName /* TODO */, jobResult.localName, false)
                 }
             } // else
         } // jobDone

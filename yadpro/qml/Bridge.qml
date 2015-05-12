@@ -91,6 +91,11 @@ QtObject {
         crossTaskStorage.localName = localName
     }
 
+    function slotUpload(path, localName) {
+        __addTask(yadApi.upload(path))
+        crossTaskStorage.localName = localName
+    }
+
     function slotSaveToDisk(public_key) {
         __addTask(yadApi.saveToDisk(public_key))
     }
@@ -206,7 +211,7 @@ QtObject {
             case "move":
             case "copy":
             case "create":
-            case "delete":
+            case "remove":
             case "unpublish":
             case "publish":
                 __addTask(yadApi.getMetaData(currentFolder, {"sort" : optKeep.sortOrder}))
@@ -223,6 +228,15 @@ QtObject {
                         jobResult.localName = fullFileName
                         jobResult.shouldShowTransferDialog = true
                     }
+                }
+            }
+            break;
+            case "upload":
+            {
+                if (resObj.response.href) {
+                    jobResult.isError = !networkManager.upload(resObj.response.href, crossTaskStorage.localName)
+                    jobResult.localName = crossTaskStorage.localName
+                    jobResult.shouldShowTransferDialog = true
                 }
             }
             break;
@@ -244,14 +258,6 @@ QtObject {
 
     property ListModel folderModel: ListModel {
         id: dirModel
-    }
-
-    property SingleDownload downloader: SingleDownload {
-        id: downloader
-        onProgressChanged: {
-            console.log("downloadInProgress", progress)
-            operationProgress(progress)
-        }
     }
 }
 

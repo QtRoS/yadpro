@@ -19,7 +19,7 @@ public:
     ~NetworkManager();
 
     Q_INVOKABLE bool download(const QString& url, const QString& localFile = "");
-    Q_INVOKABLE void upload(const QString& url);
+    Q_INVOKABLE bool upload(const QString& url, const QString& localFile);
     Q_INVOKABLE void abort();
 
     Q_PROPERTY(QString token READ token WRITE setToken)
@@ -41,7 +41,7 @@ private slots:
 
 private:
     void cleanup(bool soft = false);
-    void makeRequest(const QString& url);
+    void makeRequest(const QString& url, bool isUpload = false);
 
 private:
     QString m_token;
@@ -49,6 +49,7 @@ private:
     QNetworkAccessManager m_man;
     QFile m_file;
     QNetworkReply* m_reply;
+    bool m_isUpload;
 };
 
 #endif // NETWORKMANAGER_H

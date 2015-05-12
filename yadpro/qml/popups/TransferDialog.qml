@@ -50,8 +50,7 @@ Dialog {
         else progressBar.indeterminate = false
 
         progressBar.value = total ? current / total : 0
-
-        console.log(" --- PROGRESS ", current, total, progressBar.value)
+        // console.log(" --- PROGRESS ", current, total, progressBar.value)
     }
 
     ProgressBar {
@@ -94,7 +93,13 @@ Dialog {
         target: networkManager
 
         onOperationProgress: progressChanged(current, total)
-        onOperationFinished: isFinished = true
+        onOperationFinished:  {
+            isFinished = true
+            if (!isDownload) {
+                stopDialog()
+                bridge.slotUpdate()
+            }
+        }
     }
 
 }
