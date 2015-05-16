@@ -43,7 +43,7 @@ Dialog {
 
     Button {
         text: i18n.tr("No")
-        gradient: UbuntuColors.greyGradient
+        //gradient: UbuntuColors.greyGradient
         onClicked: {
             signOutPromptDialog.hide()
         }

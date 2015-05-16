@@ -73,7 +73,7 @@ Dialog {
 
     Button {
         text: i18n.tr("Cancel")
-        gradient: UbuntuColors.greyGradient
+        //gradient: UbuntuColors.greyGradient
         onClicked: {
             dialogItself.hide()
         }

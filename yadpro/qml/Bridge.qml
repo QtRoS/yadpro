@@ -70,8 +70,8 @@ QtObject {
         __addTask(yadApi.createFolder(dirName))
     }
 
-    function slotDelete(entry) {
-        __addTask(yadApi.remove(entry))
+    function slotRemove(entry, permanently) {
+        __addTask(yadApi.remove(entry, permanently))
     }
 
     function slotUpdate() {
@@ -181,7 +181,7 @@ QtObject {
                     var itm = items[i]
                     var o = {
                         /* All entries attributes */
-                        "href" : __checkPath(itm.path),
+                        "href" : itm.path, // TODO BUG __checkPath(itm.path),
                         "isFolder" : itm.type == "dir",
                         "displayName" : itm.name,
                         "lastModif" : itm.modified,

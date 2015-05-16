@@ -28,7 +28,7 @@ Dialog {
     property bool isDownload: false
     property bool isFinished: false
 
-    title: isDownload? qsTr("Downloading") : qsTr("Uploading")
+    title: isDownload? i18n.tr("Downloading") : i18n.tr("Uploading")
 
     function stopDialog() {
         if (!isFinished)
@@ -83,7 +83,7 @@ Dialog {
 
     Button {
         text: isFinished ? i18n.tr("Close") : i18n.tr("Cancel");
-        gradient: UbuntuColors.greyGradient
+        //gradient: UbuntuColors.greyGradient
         onClicked: {
             stopDialog()
         }

@@ -154,7 +154,7 @@ Page {
         Dialog {
             id: infoDialog
 
-            text: qsTr("You should login into Yandex.Disk in browser before use this method")
+            text: i18n.tr("You should login into Yandex.Disk in browser before use this method")
             Button {
                 text: i18n.tr("Ok")
                 onClicked: {

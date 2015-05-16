@@ -57,20 +57,11 @@ MainView {
                 console.log("PageStack onCurrentPageChanged", currentPage.title)
                 if (currentPage.reloadPageContent)
                     currentPage.reloadPageContent()
-
-//                if (currentPage != localFsPage)
-//                                localFsPage.clearModel()
             }
         }
 
         LoginPage {
             id: loginPage
-
-//            onAuthPassed: {
-//                pageStack.pop(loginPage)
-//                pageStack.push(folderView)
-//                bridge.slotMoveToFolder("/")
-//            }
 
             onAuthPassed: {
                 console.log("TOKEN", token)

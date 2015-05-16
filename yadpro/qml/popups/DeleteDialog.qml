@@ -27,17 +27,38 @@ Dialog {
 
     Button {
         text: i18n.tr("Yes")
+        color: UbuntuColors.green
         onClicked: {
-            bridge.slotDelete(selectedItem.href)
+            bridge.slotRemove(selectedItem.href, chbPermanently.checked)
             deleteFileSubmission.hide()
         }
     }
 
     Button {
         text: i18n.tr("No")
-        gradient: UbuntuColors.greyGradient
-        onClicked: {
-            deleteFileSubmission.hide()
+        color: UbuntuColors.red
+        //gradient: UbuntuColors.greyGradient
+        onClicked: deleteFileSubmission.hide()
+    }
+
+    Item {
+        height: units.gu(4)
+
+        Switch {
+            id: chbPermanently
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+            }
+        }
+
+        Label {
+            text: i18n.tr("Permanently")
+            color: chbPermanently.checked ? "red" : "grey"
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: parent.left
+            }
         }
     }
 }

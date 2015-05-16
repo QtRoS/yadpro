@@ -22,6 +22,8 @@ QtObject {
     property string clientPass: ""
     property string accessToken: ""
 
+    readonly property bool requestLogEnabled: false
+
     function generateTokenRequestUrl() {
         return "https://oauth.yandex.ru/authorize?response_type=token&client_id=%1&display=popup".arg(clientId)
     }
@@ -132,6 +134,9 @@ QtObject {
     /* Private */
     function __makeRequest(request, code, method) {
         method = method || "GET"
+
+        if (requestLogEnabled)
+            console.log("__makeRequest", request, code, method)
 
         var doc = new XMLHttpRequest()
         var task = {"code" : code, "doc" : doc, "id" : __requestIdCounter++}

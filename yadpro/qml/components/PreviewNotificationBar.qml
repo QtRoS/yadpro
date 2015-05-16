@@ -33,7 +33,7 @@ Rectangle {
 
     Label {
         id: someLabel
-        text: qsTr("Downloading previews...")
+        text: i18n.tr("Downloading previews...")
         anchors.centerIn: parent
         SequentialAnimation {
             loops: Animation.Infinite

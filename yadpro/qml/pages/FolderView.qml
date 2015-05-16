@@ -282,7 +282,7 @@ Page {
                 PopupUtils.open(Qt.resolvedUrl("../popups/DeleteDialog.qml"), null,
                                 { "text" : selectedItem.displayName,
                                   "title" : selectedItem.isFolder ?
-                                        i18n.tr("Really want to delete folder?") : i18n.tr("Really want to delete file?")
+                                        i18n.tr("Really want to delete folder? (It may take a while)") : i18n.tr("Really want to delete file?")
                                 })
             }
 
@@ -435,15 +435,15 @@ Page {
         anchors.centerIn: parent
     }
 
-    MyComponents.MiniProgressBar {
-        id: miniProgress
+//    MyComponents.MiniProgressBar {
+//        id: miniProgress
 
-        anchors {
-            bottom: parent.bottom
-            left: parent.left
-            right: parent.right
-        }
-    }
+//        anchors {
+//            bottom: parent.bottom
+//            left: parent.left
+//            right: parent.right
+//        }
+//    }
 
     MyComponents.PreviewNotificationBar { }
 
@@ -451,8 +451,8 @@ Page {
         target: bridge
         onJobDone: {
             if (jobResult.isError) {
-                showInfoBanner(i18n.tr("An error has occurred"),
-                               JSON.stringify(jobResult))
+                showInfoBanner(JSON.stringify(jobResult)),
+                               i18n.tr("An error has occurred")
             } else {
                 if (jobResult.code == "diskInformation") {
                     var r = jobResult.response
@@ -470,6 +470,6 @@ Page {
             } // else
         } // jobDone
 
-        onOperationProgress: miniProgress.progress = progress
+        // onOperationProgress: miniProgress.progress = progress
     }
 }
