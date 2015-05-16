@@ -25,11 +25,13 @@ import "../utils/JsModule.js" as JS
 Dialog {
     id: dialogItself
 
+    property string originalName: ""
+
     title: i18n.tr("Rename")
     text: i18n.tr("Enter a new name")
 
     function showDialog() {
-        var value = selectedItem.displayName
+        var value = originalName
 
         newNameTextField.text = value
         newNameTextField.forceActiveFocus()
@@ -57,16 +59,14 @@ Dialog {
         onClicked: {
             var folderName = newNameTextField.text
 
-            if (folderName == "")
+            if (!folderName)
                 return
 
             var curDir = bridge.currentFolder;
-            if (!JS.endsWith(curDir, "/"))
-                curDir += "/";
+            var oldName = JS.combinePath(curDir, originalName)
+            var newName = JS.combinePath(curDir, folderName)
 
-            bridge.slotRenameFile(curDir + selectedItem.displayName,
-                                  curDir + folderName)
-
+            bridge.slotRenameFile(oldName, newName)
             dialogItself.hide()
         }
     }

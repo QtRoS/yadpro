@@ -14,10 +14,7 @@ Page {
         // console.log("fileToUpload", fileToUpload)
         var shortName = JS.getFileName(fileToUpload)
         // console.log("shortName", shortName)
-        var path = bridge.currentFolder
-        if (JS.endsWith(path, "/"))
-            path = path + shortName
-        else path = path + "/" + shortName
+        var path = JS.combinePath(bridge.currentFolder, shortName)
         // console.log("path", path)
         bridge.slotUpload(path, fileToUpload)
     }

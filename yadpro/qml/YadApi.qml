@@ -47,7 +47,7 @@ QtObject {
 
         if (options.limit)
             baseUrl += "&limit=" + options.limit
-        else baseUrl += "&limit=" + 1024
+        else baseUrl += "&limit=" + 2048
 
         if (options.offset)
             baseUrl += "&offset=" + options.offset

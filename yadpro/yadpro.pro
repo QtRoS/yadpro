@@ -24,7 +24,6 @@ OTHER_FILES +=  yadpro.apparmor \
                 qml/components/MiniProgressBar.qml \
                 qml/components/OptKeep.qml \
                 qml/pages/LoginPage.qml \
-                qml/pages/LocalFileSystemPage.qml \
                 qml/pages/OptionsPage.qml \
                 qml/pages/FolderView.qml \
                 qml/popups/CreateFolderDialog.qml \

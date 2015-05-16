@@ -17,34 +17,37 @@
 */
 .pragma library
 
-function decorateFileSize(size) {
+var suffixesArray = ["b", "kb", "mb", "gb"]
+var ROOT_PATH = "disk:/"
+var PATH_DELIMITER = "/"
 
-    if (size === 0)
+function decorateFileSize(size) {
+    if (!size)
         return "0b"
 
-    var suffix = ["b", "kb", "mb", "gb"]
     var iter = 0
 
     for (; size > 1024; iter++)
-    {
         size = size / 1024.0
-    }
 
-    return (Math.round(size * 100) / 100) + " " + suffix[iter];
+    return (Math.round(size * 100) / 100) + " " + suffixesArray[iter];
 }
 
-function decorateDate(lastMod) {
-    return ", " + Qt.formatDateTime(new Date(lastMod))
+function decorateDate(lastMod, formatStr) {
+    var strDate = Qt.formatDateTime(new Date(lastMod))
+    if (!formatStr)
+        return strDate
+    else return formatStr.arg(strDate)
 }
 
 function decorateTitle(text) {
-    var ind = text.lastIndexOf("/") + 1
+    var ind = text.lastIndexOf(PATH_DELIMITER) + 1
     text = text.substr(ind)
     return text
 }
 
 function getFileName(fullPath) {
-    var ind = fullPath.lastIndexOf("/")
+    var ind = fullPath.lastIndexOf(PATH_DELIMITER)
     if (ind === -1)
         return fullPath
 
@@ -53,6 +56,16 @@ function getFileName(fullPath) {
 
 function endsWith(str, suffix) {
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
+
+function isRootPath(path) {
+    return path === ROOT_PATH
+}
+
+function combinePath(path, suffix) {
+    if (endsWith(path, PATH_DELIMITER))
+        return path + suffix
+    else return path + PATH_DELIMITER + suffix
 }
 
 function getImageByFileType(fileName) {

@@ -23,37 +23,35 @@ QtObject {
     /* Temporary storage for all crosstask operations. */
     property var crossTaskStorage: { "localName" : ""}
 
-    property string currentFolder: "/"
+    property string currentFolder: JS.ROOT_PATH
     property bool isBusy: taskCount > 0
 
     property int taskCount: 0
     property var tasks: []
 
+    /* Path '/' is equivalent to 'disk:/'.*/
     function slotMoveToFolder(folder) {
         if (isBusy)
             return
 
-        // console.log("slotMoveToFolder", folder)
-        var tgt = "/"
-        if (folder != "/") {
-            if (JS.endsWith(currentFolder, "/"))
-                tgt = (currentFolder + folder)
-            else tgt = (currentFolder + "/" + folder)
-        }
+        if (folder === "/")
+            folder = JS.ROOT_PATH
+
+        //console.log("slotMoveToFolder", folder)
+        var tgt = JS.isRootPath(folder) ? folder : JS.combinePath(currentFolder, folder)
 
         var t = yadApi.getMetaData(tgt, {"sort" : optKeep.sortOrder})
         __addTask(t)
     }
 
     function slotOneLevelBack() {
-        if (currentFolder == "/" || isBusy)
+        if (JS.isRootPath(currentFolder) || isBusy)
             return
 
         var slashIndex = currentFolder.lastIndexOf("/")
         var targetPath = currentFolder.substring(0, slashIndex)
 
-        if (targetPath == "")
-            targetPath = "/"
+        //console.log("slotOneLevelBack", targetPath)
 
         __addTask(yadApi.getMetaData(targetPath, {"sort" : optKeep.sortOrder}))
     }
@@ -120,12 +118,6 @@ QtObject {
         __addTask(yadApi.diskInformation())
     }
 
-    function __checkPath(path) {
-        if (path && path.indexOf("disk:") === 0)
-            return path.substr(5)
-        else return path
-    }
-
     function __addTask(t) {
         if (!t)
             return
@@ -170,7 +162,7 @@ QtObject {
                     break
                 }
 
-                currentFolder = __checkPath(r.path)
+                currentFolder = r.path
                 var downloadOnMiss = optKeep.downloadPreviews
 
                 dirModel.clear()

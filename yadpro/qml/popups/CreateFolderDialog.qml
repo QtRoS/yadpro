@@ -48,10 +48,8 @@ Dialog {
             if (folderName == "")
                 return
 
-            var curDir = bridge.currentFolder;
-            if (!JS.endsWith(curDir, "/"))
-                curDir += "/";
-            bridge.slotCreateFolder(curDir + folderName)
+            var newFOlder = JS.combinePath(bridge.currentFolder, folderName)
+            bridge.slotCreateFolder(newFOlder)
             dialogItself.hide()
         }
     }

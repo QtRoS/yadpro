@@ -34,7 +34,7 @@ Page {
     property var selectedItem: null
 
     visible: false
-    title: bridge.currentFolder == "/" ? i18n.tr("My Disk") : JS.decorateTitle(bridge.currentFolder)
+    title: JS.isRootPath(bridge.currentFolder) ? i18n.tr("My Disk") : JS.decorateTitle(bridge.currentFolder)
 
     Component.onCompleted: {
         optKeep.useGridViewChanged.connect(viewChanged)
@@ -81,7 +81,7 @@ Page {
         }
     ]
     head.backAction: Action {
-        visible: bridge.currentFolder != "/"
+        visible: !JS.isRootPath(bridge.currentFolder)
         iconName: "back"
         onTriggered: {
             bridge.slotOneLevelBack()
@@ -113,15 +113,10 @@ Page {
                             return
                         }
 
-                        var curFolder = bridge.currentFolder
-                        if (!JS.endsWith(curFolder, "/"))
-                            curFolder += "/"
-
                         var path = folderView.fileToMoveOrCopy
-                        var ind = path.lastIndexOf("/") + 1
-                        var shortFn = path.substr(ind)
+                        var shortFn = JS.getFileName(folderView.fileToMoveOrCopy)
 
-                        var newName = curFolder + shortFn
+                        var newName = JS.combinePath(bridge.currentFolder, shortFn)
                         if (folderView.isCurOperIsCopy)
                             bridge.slotCopyFile(path, newName)
                         else {
@@ -137,25 +132,13 @@ Page {
                     onTriggered: {
                         // Qt.openUrlExternally("https://disk.yandex.ru/")
                         pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"), { } )
-
-//                        file:///home/phablet/.cache/yadpro/HubIncoming/21/05.jpg
-//                        var fileToUpload = "/home/qtros/r.rb" // "/home/qtros/WUaK8Tr90sY.jpg"
-//                        console.log("fileToUpload", fileToUpload)
-//                        var shortName = JS.getFileName(fileToUpload)
-//                        console.log("shortName", shortName)
-//                        var path = bridge.currentFolder
-//                        if (JS.endsWith(path, "/"))
-//                            path = path + shortName
-//                        else path = path + "/" + shortName
-//                        console.log("path", path)
-//                        bridge.slotUpload(path, fileToUpload)
                     }
                 }
 
                 Action  {
                     text: i18n.tr("Home folder")
                     onTriggered: {
-                        if (bridge.currentFolder !== "/")
+                        if (!JS.isRootPath(bridge.currentFolder))
                             bridge.slotMoveToFolder("/")
                     }
                 }
@@ -261,7 +244,7 @@ Page {
             }
 
             function rename() {
-                PopupUtils.open(Qt.resolvedUrl("../popups/RenameDialog.qml"))
+                PopupUtils.open(Qt.resolvedUrl("../popups/RenameDialog.qml"), null, {"originalName" : selectedItem.displayName})
             }
 
             function download() {
@@ -342,7 +325,7 @@ Page {
 
             text: model.displayName
             iconSource: model.iconSource
-            subText: JS.decorateFileSize(model.contentLen)  + (optKeep.showFileTime ? JS.decorateDate(model.lastModif, ", ") : "")
+            subText: JS.decorateFileSize(model.contentLen)  + (optKeep.showFileTime ? JS.decorateDate(model.lastModif, ", %1") : "")
 
 
             onContextMenuRequested: {
