@@ -435,8 +435,8 @@ Page {
         target: bridge
         onJobDone: {
             if (jobResult.isError) {
-                showInfoBanner(JSON.stringify(jobResult)),
-                               i18n.tr("An error has occurred")
+                showInfoBanner(JSON.stringify(jobResult),
+                               i18n.tr("An error has occurred"))
             } else {
                 if (jobResult.code == "diskInformation") {
                     var r = jobResult.response
