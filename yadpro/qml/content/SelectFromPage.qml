@@ -36,12 +36,12 @@ Page {
     }
 
     ContentTransferHint {
-        anchors.fill: importFeeds
-        activeTransfer: importFeeds.activeTransfer
+        anchors.fill: root
+        activeTransfer: root.activeTransfer
     }
 
     Connections {
-        target: root.activeTransfer
+        target: root.activeTransfer ? root.activeTransfer : null
         onStateChanged: {
             console.log("StateChanged: " + root.activeTransfer.state);
             if (root.activeTransfer.state === ContentTransfer.Charged) {

@@ -23,6 +23,7 @@ Page {
     }
 
     function __exportItemsWhenPossible(url) {
+        //console.log("__exportItemsWhenPossible", root.activeTransfer.state, url)
         if (root.activeTransfer.state === ContentTransfer.InProgress) {
             root.activeTransfer.items = [ resultComponent.createObject(root, {"url": url}) ]
             root.activeTransfer.state = ContentTransfer.Charged

@@ -97,6 +97,20 @@ Page {
             actions: ActionList {
                 id: popoverActionsList
 
+//                Action {
+//                    text: "TEST"
+//                    onTriggered: {
+//                        var downloadedFileUrl = "file:///home/phablet/.cache/yadpro/YaD/m_45tt1982.jpg"
+
+//                        if (downloadedFileUrl.indexOf("file") !== 0)
+//                            downloadedFileUrl = "file://" + downloadedFileUrl
+
+//                        console.log("OPEN", downloadedFileUrl)
+//                        pageStack.push(Qt.resolvedUrl("../content/OpenWithPage.qml"),
+//                                       { "fileUrl" : downloadedFileUrl } )
+//                    }
+//                }
+
                 Action  {
                     text: i18n.tr("Create new folder...");
                     onTriggered: PopupUtils.open(Qt.resolvedUrl("../popups/CreateFolderDialog.qml"))
