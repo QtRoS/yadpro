@@ -35,11 +35,7 @@ Dialog {
         newNameTextField.forceActiveFocus()
 
         var indOfDot = value.lastIndexOf('.')
-        if (indOfDot > 0) {
-            newNameTextField.cursorPosition = indOfDot
-        } else {
-            newNameTextField.cursorPosition = newNameTextField.text.length
-        }
+        newNameTextField.cursorPosition = indOfDot > 0 ? indOfDot : newNameTextField.text.length
 
         newNameTextField.forceActiveFocus()
 
