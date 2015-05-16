@@ -25,13 +25,11 @@ import "../utils/JsModule.js" as JS
 Dialog {
     id: dialogItself
 
-    property string originalName: ""
-
     title: i18n.tr("Rename")
     text: i18n.tr("Enter a new name")
 
-    function showDialog() {
-        var value = originalName
+    Component.onCompleted: {
+        var value = selectedItem.displayName
 
         newNameTextField.text = value
         newNameTextField.forceActiveFocus()
@@ -56,6 +54,7 @@ Dialog {
 
     Button {
         text: i18n.tr("Ok")
+        color: UbuntuColors.green
         onClicked: {
             var folderName = newNameTextField.text
 
@@ -63,7 +62,7 @@ Dialog {
                 return
 
             var curDir = bridge.currentFolder;
-            var oldName = JS.combinePath(curDir, originalName)
+            var oldName = JS.combinePath(curDir, selectedItem.displayName)
             var newName = JS.combinePath(curDir, folderName)
 
             bridge.slotRenameFile(oldName, newName)
@@ -73,7 +72,7 @@ Dialog {
 
     Button {
         text: i18n.tr("Cancel")
-        //gradient: UbuntuColors.greyGradient
+        color: UbuntuColors.red
         onClicked: {
             dialogItself.hide()
         }

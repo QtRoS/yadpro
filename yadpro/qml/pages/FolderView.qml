@@ -244,7 +244,7 @@ Page {
             }
 
             function rename() {
-                PopupUtils.open(Qt.resolvedUrl("../popups/RenameDialog.qml"), null, {"originalName" : selectedItem.displayName})
+                PopupUtils.open(Qt.resolvedUrl("../popups/RenameDialog.qml"))
             }
 
             function download() {
@@ -308,6 +308,7 @@ Page {
 
             Button {
                 text: i18n.tr("Ok")
+                color: UbuntuColors.green
                 onClicked: {
                     infoBanner.hide()
                 }

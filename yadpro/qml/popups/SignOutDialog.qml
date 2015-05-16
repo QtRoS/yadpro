@@ -30,6 +30,7 @@ Dialog {
 
     Button {
         text: i18n.tr("Yes")
+        color: UbuntuColors.green
         onClicked: {
             pageStack.pop(folderView)
             pageStack.push(loginPage)
@@ -43,7 +44,7 @@ Dialog {
 
     Button {
         text: i18n.tr("No")
-        //gradient: UbuntuColors.greyGradient
+        color: UbuntuColors.red
         onClicked: {
             signOutPromptDialog.hide()
         }

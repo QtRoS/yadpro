@@ -67,6 +67,7 @@ Dialog {
         enabled: isFinished
 
         text: i18n.tr("Open")
+        color: UbuntuColors.green
         onClicked: {
             var downloadedFileUrl = localName
 
@@ -83,7 +84,7 @@ Dialog {
 
     Button {
         text: isFinished ? i18n.tr("Close") : i18n.tr("Cancel");
-        //gradient: UbuntuColors.greyGradient
+        color: UbuntuColors.red
         onClicked: {
             stopDialog()
         }

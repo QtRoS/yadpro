@@ -37,7 +37,6 @@ Dialog {
     Button {
         text: i18n.tr("No")
         color: UbuntuColors.red
-        //gradient: UbuntuColors.greyGradient
         onClicked: deleteFileSubmission.hide()
     }
 

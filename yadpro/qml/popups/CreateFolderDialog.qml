@@ -28,11 +28,7 @@ Dialog {
     title: i18n.tr("Create folder")
     text: i18n.tr("Enter name for new folder")
 
-    function showDialog() {
-        newFolderNameTextField.text = ""
-        newFolderNameTextField.forceActiveFocus()
-        dialogItself.show()
-    }
+    Component.onCompleted: newFolderNameTextField.forceActiveFocus()
 
     TextField {
         id: newFolderNameTextField
@@ -42,6 +38,7 @@ Dialog {
 
     Button {
         text: i18n.tr("Ok")
+        color: UbuntuColors.green
         onClicked: {
             var folderName = newFolderNameTextField.text
 
@@ -56,7 +53,7 @@ Dialog {
 
     Button {
         text: i18n.tr("Cancel")
-        //gradient: UbuntuColors.greyGradient
+        color: UbuntuColors.red
         onClicked: {
             dialogItself.hide()
         }
