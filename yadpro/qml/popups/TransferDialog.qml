@@ -18,6 +18,7 @@
 
 import QtQuick 2.3
 import Ubuntu.Components 1.1
+import Ubuntu.Content 1.1
 import Ubuntu.Components.Popups 1.0
 
 Dialog {
@@ -27,6 +28,8 @@ Dialog {
     property string localName
     property bool isDownload: false
     property bool isFinished: false
+
+    property var transferContext: null
 
     title: isDownload? i18n.tr("Downloading") : i18n.tr("Uploading")
 
@@ -66,7 +69,7 @@ Dialog {
         visible: isDownload
         enabled: isFinished
 
-        text: i18n.tr("Open")
+        text: transferContext ? i18n.tr("Select") : i18n.tr("Open")
         color: UbuntuColors.green
         onClicked: {
             var downloadedFileUrl = localName
@@ -74,9 +77,19 @@ Dialog {
             if (downloadedFileUrl.indexOf("file") !== 0)
                 downloadedFileUrl = "file://" + downloadedFileUrl
 
-            console.log("OPEN", downloadedFileUrl)
-            pageStack.push(Qt.resolvedUrl("../content/OpenWithPage.qml"),
-                           { "fileUrl" : downloadedFileUrl } )
+            console.log("TRANFSER DIALOG URL", downloadedFileUrl, transferContext ? "Export" : "Download")
+
+            if (transferContext) {
+                var res = fileSelectorResultComponent.createObject(transferContext.visualParent, {"url": downloadedFileUrl})
+
+                transferContext.transfer.items = [res]
+                transferContext.transfer.state = ContentTransfer.Charged
+
+                transferContext.transfer = null
+            } else {
+                pageStack.push(Qt.resolvedUrl("../content/OpenWithPage.qml"),
+                               { "fileUrl" : downloadedFileUrl } )
+            }
 
             rootDialog.stopDialog()
         }
@@ -101,6 +114,11 @@ Dialog {
                 bridge.slotUpdate()
             }
         }
+    }
+
+    Component {
+        id: fileSelectorResultComponent
+        ContentItem { }
     }
 
 }

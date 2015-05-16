@@ -21,10 +21,10 @@ void CppUtils::copyToClipboard(const QString& text) const
 QString CppUtils::prependWithDownloadsPath(const QString &fileName) const
 {
     QString dirName = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/YaD"; // TODO DownloadLocation
-    qDebug() << "DOWNLOAD DIR" << dirName;
+    // qDebug() << "DOWNLOAD DIR" << dirName;
     if (!QDir(dirName).exists() && !QDir().mkdir(dirName))
     {
-        qDebug() << "CAN'T CREATE DIRECTORY";
+        qDebug() << "CAN'T DOWNLOADS CREATE DIRECTORY" << dirName;
         return fileName;
     }
 

@@ -21,6 +21,8 @@ import Ubuntu.Components 1.1
 import Ubuntu.Components.Popups 1.0
 import Ubuntu.Components.ListItems 0.1 as ListItem
 
+import Ubuntu.Content 1.1
+
 import "../utils/JsModule.js" as JS
 import "../components" as MyComponents
 import "../popups"
@@ -33,12 +35,25 @@ Page {
 
     property var selectedItem: null
 
+    property QtObject exportContext: QtObject {
+        property var transfer: null
+        readonly property Item visualParent: folderView
+    }
+
     visible: false
     title: JS.isRootPath(bridge.currentFolder) ? i18n.tr("My Disk") : JS.decorateTitle(bridge.currentFolder)
 
     Component.onCompleted: {
         optKeep.useGridViewChanged.connect(viewChanged)
         viewChanged()
+    }
+
+    Connections {
+        target: ContentHub
+        onExportRequested: {
+            console.log("---- CONTENT REQUEST:", JSON.stringify(transfer))
+            exportContext.transfer = transfer
+        }
     }
 
     function viewChanged() {
@@ -56,10 +71,12 @@ Page {
     }
 
     function showTransferDialog(displayName, localName, isDownload) {
+        var cntx = exportContext.transfer ? exportContext : null
         PopupUtils.open(Qt.resolvedUrl("../popups/TransferDialog.qml"), null,
                         { "displayName" : displayName,
-                          "isDownload" : isDownload,
-                          "localName" : localName,
+                            "isDownload" : isDownload,
+                            "localName" : localName,
+                            "transferContext" : cntx
                         })
     }
 
@@ -97,19 +114,19 @@ Page {
             actions: ActionList {
                 id: popoverActionsList
 
-//                Action {
-//                    text: "TEST"
-//                    onTriggered: {
-//                        var downloadedFileUrl = "file:///home/phablet/.cache/yadpro/YaD/m_45tt1982.jpg"
+                //                Action {
+                //                    text: "TEST"
+                //                    onTriggered: {
+                //                        var downloadedFileUrl = "file:///home/phablet/.cache/yadpro/YaD/m_45tt1982.jpg"
 
-//                        if (downloadedFileUrl.indexOf("file") !== 0)
-//                            downloadedFileUrl = "file://" + downloadedFileUrl
+                //                        if (downloadedFileUrl.indexOf("file") !== 0)
+                //                            downloadedFileUrl = "file://" + downloadedFileUrl
 
-//                        console.log("OPEN", downloadedFileUrl)
-//                        pageStack.push(Qt.resolvedUrl("../content/OpenWithPage.qml"),
-//                                       { "fileUrl" : downloadedFileUrl } )
-//                    }
-//                }
+                //                        console.log("OPEN", downloadedFileUrl)
+                //                        pageStack.push(Qt.resolvedUrl("../content/OpenWithPage.qml"),
+                //                                       { "fileUrl" : downloadedFileUrl } )
+                //                    }
+                //                }
 
                 Action  {
                     text: i18n.tr("Create new folder...");
@@ -206,16 +223,14 @@ Page {
                 var actionComp = Qt.createComponent(Qt.resolvedUrl("../components/ActionWithCallback.qml"))
 
                 var action = actionComp.createObject(contextMenuPopover)
+                action.text = exportContext.transfer ? i18n.tr("Export...") : i18n.tr("Download...")
+                action.callback = download
+                actionArray.push(action)
+
+                action = actionComp.createObject(contextMenuPopover)
                 action.text = i18n.tr("Rename...")
                 action.callback = rename
                 actionArray.push(action)
-
-                if (true) {
-                    action = actionComp.createObject(contextMenuPopover)
-                    action.text = i18n.tr("Download...")
-                    action.callback = download
-                    actionArray.push(action)
-                }
 
                 action = actionComp.createObject(contextMenuPopover)
                 action.text = i18n.tr("Copy")
@@ -278,8 +293,8 @@ Page {
             function remove() {
                 PopupUtils.open(Qt.resolvedUrl("../popups/DeleteDialog.qml"), null,
                                 { "text" : selectedItem.displayName,
-                                  "title" : selectedItem.isFolder ?
-                                        i18n.tr("Really want to delete folder? (It may take a while)") : i18n.tr("Really want to delete file?")
+                                    "title" : selectedItem.isFolder ?
+                                                  i18n.tr("Really want to delete folder? (It may take a while)") : i18n.tr("Really want to delete file?")
                                 })
             }
 
@@ -301,12 +316,12 @@ Page {
                 var itm = selectedItem
                 var formatStr = "Name: %1\nType: %2\nLast modified: %3\nCreation date: %4\nSize: %5\nMime: %6\nPublished: %7\n"
                 var res = formatStr.arg(itm.displayName)
-                                   .arg(itm.isFolder ? "Folder" : "File")
-                                   .arg(JS.decorateDate(itm.lastModif))
-                                   .arg(JS.decorateDate(itm.creationDate))
-                                   .arg(JS.decorateFileSize(itm.contentLen))
-                                   .arg(itm.contentType)
-                                   .arg(itm.isPublished ? i18n.tr("Yes") : i18n.tr("No"))
+                .arg(itm.isFolder ? "Folder" : "File")
+                .arg(JS.decorateDate(itm.lastModif))
+                .arg(JS.decorateDate(itm.creationDate))
+                .arg(JS.decorateFileSize(itm.contentLen))
+                .arg(itm.contentType)
+                .arg(itm.isPublished ? i18n.tr("Yes") : i18n.tr("No"))
                 // console.log("FILE INFO: ", res)
 
                 showInfoBanner(res, i18n.tr("Details"))
@@ -382,10 +397,7 @@ Page {
             text: model.displayName
             iconSource: model.iconSource
 
-            onPressed: {
-                gridView.modelItem = model
-                gridView.currentIndex = index
-            }
+            onPressed: gridView.currentIndex = index
 
             onClicked: {
                 if (isFolder)
@@ -433,15 +445,15 @@ Page {
         anchors.centerIn: parent
     }
 
-//    MyComponents.MiniProgressBar {
-//        id: miniProgress
+    //    MyComponents.MiniProgressBar {
+    //        id: miniProgress
 
-//        anchors {
-//            bottom: parent.bottom
-//            left: parent.left
-//            right: parent.right
-//        }
-//    }
+    //        anchors {
+    //            bottom: parent.bottom
+    //            left: parent.left
+    //            right: parent.right
+    //        }
+    //    }
 
     MyComponents.PreviewNotificationBar { }
 
@@ -455,9 +467,9 @@ Page {
                 if (jobResult.code == "diskInformation") {
                     var r = jobResult.response
                     var message = i18n.tr("Total space: %1\nUsed space: %2\nTrash size: %3")
-                        .arg(JS.decorateFileSize(r.total_space))
-                        .arg(JS.decorateFileSize(r.used_space))
-                        .arg(JS.decorateFileSize(r.trash_size))
+                    .arg(JS.decorateFileSize(r.total_space))
+                    .arg(JS.decorateFileSize(r.used_space))
+                    .arg(JS.decorateFileSize(r.trash_size))
 
                     showInfoBanner(message, i18n.tr("Disk information"))
                 } else if (jobResult.code == "download" && jobResult.shouldShowTransferDialog) {
