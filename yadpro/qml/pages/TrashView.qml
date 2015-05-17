@@ -104,6 +104,12 @@ Page {
                 }
 
                 Action {
+                    text: i18n.tr("One level back")
+                    visible: !JS.isRootPath(trashBridge.currentFolder)
+                    onTriggered: trashBridge.slotOneLevelBack()
+                }
+
+                Action {
                     text: i18n.tr("Options...")
                     onTriggered: {
                         optionsPage.updateInfoFromOptions()
