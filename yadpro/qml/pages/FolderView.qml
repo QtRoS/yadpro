@@ -145,6 +145,15 @@ Page {
                 //                }
 
                 Action  {
+                    text: i18n.tr("Upload...")
+                    // enabled: false
+                    onTriggered: {
+                        // Qt.openUrlExternally("https://disk.yandex.ru/")
+                        pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"), { } )
+                    }
+                }
+
+                Action  {
                     text: i18n.tr("Create new folder...");
                     onTriggered: PopupUtils.open(Qt.resolvedUrl("../popups/CreateFolderDialog.qml"))
                 }
@@ -170,15 +179,6 @@ Page {
                             bridge.slotRenameFile(path, newName)
                             fileToMoveOrCopy = ""
                         }
-                    }
-                }
-
-                Action  {
-                    text: i18n.tr("Upload...")
-                    // enabled: false
-                    onTriggered: {
-                        // Qt.openUrlExternally("https://disk.yandex.ru/")
-                        pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"), { } )
                     }
                 }
 
