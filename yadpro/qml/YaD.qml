@@ -38,7 +38,7 @@ MainView {
 
     useDeprecatedToolbar: false
     
-    width: units.gu(100)
+    width: units.gu(50)
     height: units.gu(75)
 
     headerColor: "#3a2c32"

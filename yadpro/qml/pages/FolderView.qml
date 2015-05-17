@@ -32,13 +32,7 @@ Page {
 
     property bool isCurOperIsCopy: false
     property string fileToMoveOrCopy: ""
-
     property var selectedItem: null
-
-    property QtObject exportContext: QtObject {
-        property var transfer: null
-        readonly property Item visualParent: folderView
-    }
 
     visible: false
     title: JS.isRootPath(bridge.currentFolder) ? i18n.tr("My Disk") : JS.decorateTitle(bridge.currentFolder)
@@ -48,13 +42,34 @@ Page {
         viewChanged()
     }
 
+    // --==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==
+    property QtObject exportContext: QtObject {
+        property var transfer: null
+        readonly property Item visualParent: folderView
+    }
+
     Connections {
         target: ContentHub
         onExportRequested: {
             console.log("---- CONTENT REQUEST:", JSON.stringify(transfer))
             exportContext.transfer = transfer
+
+            // Scroll to top (user will be able to see tip).
+            var curView = optKeep.useGridView ? gridView : simpleList
+            curView.positionViewAtBeginning()
         }
     }
+
+    property bool isTransferInProgress: exportContext.transfer != null
+
+    function cancelTransfer() {
+        if (exportContext.transfer) {
+            exportContext.transfer.state = ContentTransfer.Aborted
+            exportContext.transfer = null
+        }
+    }
+
+    // --==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==
 
     function viewChanged() {
         var v = optKeep.useGridView
@@ -67,11 +82,12 @@ Page {
     }
 
     function showInfoBanner(text, title, iconSource) {
-        PopupUtils.open(compInfoBanner, null, { "text" : text, "title" : title} )
+        PopupUtils.open(Qt.resolvedUrl("../popups/InfoBanner.qml"),
+                        null, { "text" : text, "title" : title} )
     }
 
     function showTransferDialog(displayName, localName, isDownload) {
-        var cntx = exportContext.transfer ? exportContext : null
+        var cntx = isTransferInProgress ? exportContext : null
         PopupUtils.open(Qt.resolvedUrl("../popups/TransferDialog.qml"), null,
                         { "displayName" : displayName,
                             "isDownload" : isDownload,
@@ -223,7 +239,7 @@ Page {
                 var actionComp = Qt.createComponent(Qt.resolvedUrl("../components/ActionWithCallback.qml"))
 
                 var action = actionComp.createObject(contextMenuPopover)
-                action.text = exportContext.transfer ? i18n.tr("Export...") : i18n.tr("Download...")
+                action.text = isTransferInProgress ? i18n.tr("Export...") : i18n.tr("Download...")
                 action.callback = download
                 actionArray.push(action)
 
@@ -329,27 +345,16 @@ Page {
         } // ActionSelectionPopover
     }
 
-    Component {
-        id: compInfoBanner
-
-        Dialog {
-            id: infoBanner
-
-            Button {
-                text: i18n.tr("Ok")
-                color: UbuntuColors.green
-                onClicked: {
-                    infoBanner.hide()
-                }
-            }
-        }
-    }
-
     ListView {
         id: simpleList
 
         anchors.fill: parent
         model: bridge.folderModel
+
+        header: MyComponents.FolderViewHeader {
+            isActive: isTransferInProgress
+            onCanceled: cancelTransfer()
+        }
 
         delegate: MyComponents.ListDelegate {
 
@@ -368,6 +373,10 @@ Page {
                 simpleList.currentIndex = index
                 if (isFolder)
                     bridge.slotMoveToFolder(model.displayName)
+                else if (isTransferInProgress) {
+                    selectedItem = model
+                    bridge.slotDownload(selectedItem.href, selectedItem.displayName)
+                }
             }
         }
     } // ListView
@@ -377,7 +386,11 @@ Page {
 
         property variant modelItem: null
 
-        // height: parent.height // + units.gu(16)
+        header: MyComponents.FolderViewHeader {
+            isActive: isTransferInProgress
+            onCanceled: cancelTransfer()
+        }
+
         anchors {
             top: parent.top
             bottom: parent.bottom
@@ -402,11 +415,15 @@ Page {
             onClicked: {
                 if (isFolder)
                     bridge.slotMoveToFolder(model.displayName)
+                else if (isTransferInProgress) {
+                    selectedItem = model
+                    bridge.slotDownload(selectedItem.href, selectedItem.displayName)
+                }
             }
 
             onContextMenuRequested: {
                 selectedItem = model
-                gridView.currentIndex = selectedItem.index
+                // gridView.currentIndex = selectedItem.index
                 PopupUtils.open(contextMenuComponent, gridView.currentItem)
             }
         } // Delegate

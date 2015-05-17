@@ -10,7 +10,7 @@
             "content-hub": "yadpro/contenthub.json"
         }
     },
-    "version": "1.9.2",
+    "version": "1.9.5",
     "maintainer": "Roman Shchekin <mrqtros@gmail.com>",
     "framework": "ubuntu-sdk-14.10"
 }

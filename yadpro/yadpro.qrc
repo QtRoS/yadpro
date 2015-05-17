@@ -24,6 +24,8 @@
         <file>qml/content/contenttyperesolver.js</file>
         <file>qml/content/OpenWithPage.qml</file>
         <file>qml/content/SelectFromPage.qml</file>
+        <file>qml/components/FolderViewHeader.qml</file>
+        <file>qml/popups/InfoBanner.qml</file>
     </qresource>
     <qresource prefix="/img">
         <file>qml/images/audio.png</file>
