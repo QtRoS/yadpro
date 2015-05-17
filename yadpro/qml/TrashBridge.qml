@@ -1,10 +1,11 @@
 import QtQuick 2.3
 
 import "utils/JsModule.js" as JS
-import YaD.CppUtils 1.0
 
 BaseBridge {
     id: bridgeObject
+
+    Component.onCompleted: currentFolder = JS.TRASH_ROOT_PATH
 
     /* Path '/' is equivalent to 'disk:/'.*/
     function slotMoveToFolder(folder) {
@@ -12,12 +13,11 @@ BaseBridge {
             return
 
         if (folder === "/")
-            folder = JS.ROOT_PATH
+            folder = JS.TRASH_ROOT_PATH
 
-        //console.log("slotMoveToFolder", folder)
         var tgt = JS.isRootPath(folder) ? folder : JS.combinePath(currentFolder, folder)
 
-        var t = yadApi.getMetaData(tgt, {"sort" : optKeep.sortOrder})
+        var t = yadApi.trashGetMetadata(tgt, {"sort" : optKeep.sortOrder})
         __addTask(t)
     }
 
@@ -28,51 +28,11 @@ BaseBridge {
         var slashIndex = currentFolder.lastIndexOf("/")
         var targetPath = currentFolder.substring(0, slashIndex)
 
-        //console.log("slotOneLevelBack", targetPath)
-
-        __addTask(yadApi.getMetaData(targetPath, {"sort" : optKeep.sortOrder}))
-    }
-
-    function slotRenameFile(oldName, newName) {
-        __addTask(yadApi.moveTo(oldName, newName))
-    }
-
-    function slotCopyFile(oldName, newName) {
-        __addTask(yadApi.copyTo(oldName, newName))
-    }
-
-    function slotCreateFolder(dirName) {
-        __addTask(yadApi.createFolder(dirName))
-    }
-
-    function slotRemove(entry, permanently) {
-        __addTask(yadApi.remove(entry, permanently))
+        __addTask(yadApi.trashGetMetadata(targetPath, {"sort" : optKeep.sortOrder}))
     }
 
     function slotUpdate() {
-        __addTask(yadApi.getMetaData(currentFolder, {"sort" : optKeep.sortOrder}))
-    }
-
-    function slotPublish(path) {
-        __addTask(yadApi.publish(path))
-    }
-
-    function slotUnpublish(path) {
-        __addTask(yadApi.unpublish(path))
-    }
-
-    function slotDownload(path, localName) {
-        __addTask(yadApi.download(path))
-        crossTaskStorage.localName = localName
-    }
-
-    function slotUpload(path, localName) {
-        __addTask(yadApi.upload(path))
-        crossTaskStorage.localName = localName
-    }
-
-    function slotSaveToDisk(public_key) {
-        __addTask(yadApi.saveToDisk(public_key))
+        __addTask(yadApi.trashGetMetadata(currentFolder, {"sort" : optKeep.sortOrder}))
     }
 
     function slotAbort(code) {
@@ -91,8 +51,12 @@ BaseBridge {
         taskCount = tasks.length
     }
 
-    function slotGetDiskInfo() {
-        __addTask(yadApi.diskInformation())
+    function slotRemove(path) {
+        __addTask(yadApi.trashRemove(path))
+    }
+
+    function slotRestore(path) {
+        __addTask(yadApi.trashRestore(path))
     }
 
     property QtObject yadApi: YadApi {
@@ -102,7 +66,7 @@ BaseBridge {
 
             __removeTask(resObj.task)
 
-            if (code != "metadata")
+            if (code != "trashMetadata")
                 console.log(JSON.stringify(resObj.response))
 
             var jobResult = { "isError" : resObj.isError, "response" : resObj.response, "code" : code }
@@ -114,7 +78,7 @@ BaseBridge {
 
             switch (code)
             {
-            case "metadata":
+            case "trashMetadata":
                 var r = resObj.response
 
                 if (!r.path) {
@@ -160,48 +124,10 @@ BaseBridge {
                 folderModel.append(itemsToAppend)
 
                 break;
-            case "move":
-            case "copy":
-            case "create":
-            case "remove":
-            case "unpublish":
-            case "publish":
-                __addTask(yadApi.getMetaData(currentFolder, {"sort" : optKeep.sortOrder}))
+            case "trashRemove":
+            case "trashRestore":
+                __addTask(yadApi.trashGetMetadata(currentFolder, {"sort" : optKeep.sortOrder}))
                 break;
-            case "download":
-            {
-                if (resObj.response.href) {
-
-                    if (optKeep.downloadInBrowser) {
-                        Qt.openUrlExternally(resObj.response.href)
-                    } else {
-                        var fullFileName = CppUtils.prependWithDownloadsPath(crossTaskStorage.localName)
-                        jobResult.isError = !networkManager.download(resObj.response.href, fullFileName)
-                        jobResult.localName = fullFileName
-                        jobResult.shouldShowTransferDialog = true
-                    }
-                }
-            }
-            break;
-            case "upload":
-            {
-                if (resObj.response.href) {
-                    jobResult.isError = !networkManager.upload(resObj.response.href, crossTaskStorage.localName)
-                    jobResult.localName = crossTaskStorage.localName
-                    jobResult.shouldShowTransferDialog = true
-                }
-            }
-            break;
-            case "saveToDisk":
-            {
-                console.assert(false, "Save to disk done") // TODO
-            }
-            break;
-            case "diskInformation":
-            {
-                //jobDone(resObj.response)
-            }
-            break;
             } // switch
 
             jobDone(jobResult)

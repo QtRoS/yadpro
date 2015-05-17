@@ -19,6 +19,7 @@
 
 var suffixesArray = ["b", "kb", "mb", "gb"]
 var ROOT_PATH = "disk:/"
+var TRASH_ROOT_PATH = "trash:/"
 var PATH_DELIMITER = "/"
 
 function decorateFileSize(size) {
@@ -59,7 +60,7 @@ function endsWith(str, suffix) {
 }
 
 function isRootPath(path) {
-    return path === ROOT_PATH
+    return path === ROOT_PATH || path === TRASH_ROOT_PATH
 }
 
 function combinePath(path, suffix) {

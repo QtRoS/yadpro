@@ -207,6 +207,14 @@ Page {
                 }
 
                 Action {
+                    text: i18n.tr("Explore trash...")
+                    enabled: true
+                    onTriggered: {
+                        pageStack.push(Qt.resolvedUrl("./TrashView.qml"), { } )
+                    }
+                }
+
+                Action {
                     text: i18n.tr("Options...")
                     onTriggered: {
                         optionsPage.updateInfoFromOptions()
@@ -360,6 +368,7 @@ Page {
 
             text: model.displayName
             iconSource: model.iconSource
+            isPublished: model.isPublished
             subText: JS.decorateFileSize(model.contentLen)  + (optKeep.showFileTime ? JS.decorateDate(model.lastModif, ", %1") : "")
 
 
@@ -384,8 +393,6 @@ Page {
     GridView {
         id: gridView
 
-        property variant modelItem: null
-
         header: MyComponents.FolderViewHeader {
             isActive: isTransferInProgress
             onCanceled: cancelTransfer()
@@ -409,6 +416,7 @@ Page {
         delegate: MyComponents.GridDelegate {
             text: model.displayName
             iconSource: model.iconSource
+            isPublished: model.isPublished
 
             onPressed: gridView.currentIndex = index
 

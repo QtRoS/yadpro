@@ -26,13 +26,14 @@ import "../utils/JsModule.js" as JS
 ListItem.Subtitled {
     id: rootDelRect
 
+    property bool isPublished
     signal contextMenuRequested(var selItem)
 
     height: units.gu(7)
     width: parent.width
 
     Image {
-        visible: model.isPublished
+        visible: isPublished
         asynchronous: true
         sourceSize.width: units.gu(2) // iconSize
         sourceSize.height: units.gu(2) // iconSize

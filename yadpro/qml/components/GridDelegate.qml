@@ -30,13 +30,14 @@ Rectangle {
 
     property alias text: lblDisplayName.text
     property alias iconSource: imageIcon.source
+    property bool isPublished
 
     color: delegateMouseArea.pressed? "#88dddddd" : "#00000000"
     width: units.gu(13)
     height: units.gu(14)
 
     Image {
-        visible: model.isPublished
+        visible: isPublished
         asynchronous: true
         sourceSize.width: units.gu(2) // iconSize
         sourceSize.height: units.gu(2) // iconSize

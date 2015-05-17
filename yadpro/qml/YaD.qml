@@ -74,6 +74,7 @@ MainView {
                 pageStack.push(folderView)
 
                 bridge.yadApi.accessToken = token
+                trashBridge.yadApi.accessToken = token
                 bridge.slotMoveToFolder("/")
             }
         }
@@ -93,5 +94,9 @@ MainView {
 
     Bridge {
         id: bridge
+    }
+
+    TrashBridge {
+        id: trashBridge
     }
 }

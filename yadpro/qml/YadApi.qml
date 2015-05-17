@@ -131,6 +131,36 @@ QtObject {
         return __makeRequest(baseUrl, "diskInformation")
     }
 
+    /* Trash */
+    function trashGetMetadata(path, options) {
+        path = path || "/"
+        options = options || {}
+        var baseUrl = "https://cloud-api.yandex.net/v1/disk/trash/resources?path=" + encodeURIComponent(path)
+
+        if (options.limit)
+            baseUrl += "&limit=" + options.limit
+        else baseUrl += "&limit=" + 2048
+
+        if (options.offset)
+            baseUrl += "&offset=" + options.offset
+
+        return __makeRequest(baseUrl, "trashMetadata")
+    }
+
+    function trashRemove(path) {
+        if (!path)
+            return
+        var baseUrl = "https://cloud-api.yandex.net/v1/disk/trash/resources?path=" + encodeURIComponent(path)
+        return __makeRequest(baseUrl, "trashRemove", "DELETE")
+    }
+
+    function trashRestore(path) {
+        if (!path)
+            return
+        var baseUrl = "https://cloud-api.yandex.net/v1/disk/trash/resources/restore?path=" + encodeURIComponent(path)
+        return __makeRequest(baseUrl, "trashRestore", "PUT")
+    }
+
     /* Private */
     function __makeRequest(request, code, method) {
         method = method || "GET"

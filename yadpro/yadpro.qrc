@@ -26,6 +26,9 @@
         <file>qml/content/SelectFromPage.qml</file>
         <file>qml/components/FolderViewHeader.qml</file>
         <file>qml/popups/InfoBanner.qml</file>
+        <file>qml/BaseBridge.qml</file>
+        <file>qml/TrashBridge.qml</file>
+        <file>qml/pages/TrashView.qml</file>
     </qresource>
     <qresource prefix="/img">
         <file>qml/images/audio.png</file>

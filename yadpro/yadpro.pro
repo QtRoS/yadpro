@@ -43,7 +43,10 @@ OTHER_FILES +=  yadpro.apparmor \
     qml/content/contenttyperesolver.js \
     qml/content/SelectFromPage.qml \
     qml/popups/InfoBanner.qml \
-    qml/components/FolderViewHeader.qml
+    qml/components/FolderViewHeader.qml \
+    qml/BaseBridge.qml \
+    qml/TrashBridge.qml \
+    qml/pages/TrashView.qml
 
 
 #specify where the config files are installed to
