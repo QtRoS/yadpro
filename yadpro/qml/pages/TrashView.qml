@@ -32,7 +32,7 @@ Page {
     property var selectedItem: null
 
     visible: false
-    title: JS.isRootPath(trashBridge.currentFolder) ? i18n.tr("Trash") : JS.decorateTitle(trashBridge.currentFolder)
+    title: i18n.tr("Trash") // JS.isRootPath(trashBridge.currentFolder) ? i18n.tr("Trash") : JS.decorateTitle(trashBridge.currentFolder)
 
     Component.onCompleted: {
         optKeep.useGridViewChanged.connect(viewChanged)

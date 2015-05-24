@@ -197,11 +197,6 @@ BaseBridge {
                 console.assert(false, "Save to disk done") // TODO
             }
             break;
-            case "diskInformation":
-            {
-                //jobDone(resObj.response)
-            }
-            break;
             } // switch
 
             jobDone(jobResult)
