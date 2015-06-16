@@ -1,5 +1,5 @@
 import QtQuick 2.3
-import Ubuntu.Components 1.1
+import Ubuntu.Components 1.2
 import Ubuntu.Content 1.1
 
 import "../utils/JsModule.js" as JS
