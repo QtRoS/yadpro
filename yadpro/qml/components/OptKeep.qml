@@ -119,7 +119,7 @@ QtObject {
         database: settingsDataBase
         docId: 'settingsDocument'
         create: true
-        defaults: { "showFileTime" : true, "useGridView" : true, "token" : "73d24f778cdf4b0f80a3247dce20e937",
+        defaults: { "showFileTime" : true, "useGridView" : true, "token" : "",
                     "downloadInBrowser" : false, "sortOrder" : "name", "downloadPreviews" : true }
     }
 }

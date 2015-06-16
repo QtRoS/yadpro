@@ -7,7 +7,7 @@ BaseBridge {
 
     Component.onCompleted: currentFolder = JS.TRASH_ROOT_PATH
 
-    /* Path '/' is equivalent to 'disk:/'.*/
+    /* Path '/' is equivalent to 'trash:/' .*/
     function slotMoveToFolder(folder) {
         if (isBusy)
             return
