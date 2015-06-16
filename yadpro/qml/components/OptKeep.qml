@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import U1db 1.0 as U1db
 
 QtObject {
@@ -124,7 +124,7 @@ QtObject {
     }
 }
 
-//import QtQuick 2.3
+//import QtQuick 2.4
 //import "../utils/DataBase.js" as DB
 
 ///* New interface for options.

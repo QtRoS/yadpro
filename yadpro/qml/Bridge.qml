@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 
 import "utils/JsModule.js" as JS
 import YaD.CppUtils 1.0

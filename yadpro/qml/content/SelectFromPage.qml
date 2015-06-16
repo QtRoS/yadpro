@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import Ubuntu.Components 1.2
 import Ubuntu.Content 1.1
 
