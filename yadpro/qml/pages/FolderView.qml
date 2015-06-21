@@ -146,15 +146,22 @@ Page {
 
                 Action  {
                     text: i18n.tr("Upload...")
-                    // enabled: false
                     onTriggered: {
-                        // Qt.openUrlExternally("https://disk.yandex.ru/")
-                        pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"), { } )
+                        selectionCallback(["/home/qtros/shorts.png", "/home/qtros/shorts2.png"])
+                        // TODO
+                        //pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"),
+                        //               { "selectionCallback" : selectionCallback } )
+                    }
+
+                    function selectionCallback(filesToUpload) {
+                        for (var f in filesToUpload)
+                            console.log(filesToUpload[f])
+                        transferManager.addUpload(filesToUpload)
                     }
                 }
 
                 Action  {
-                    text: i18n.tr("Create new folder...");
+                    text: i18n.tr("Create new folder...")
                     onTriggered: PopupUtils.open(Qt.resolvedUrl("../popups/CreateFolderDialog.qml"))
                 }
 
@@ -301,7 +308,9 @@ Page {
             }
 
             function download() {
-                bridge.slotDownload(selectedItem.href, selectedItem.displayName)
+                // TODO BUG
+                //bridge.slotDownload(selectedItem.href, selectedItem.displayName)
+                transferManager.addDownload([selectedItem.href])
             }
 
             function copy() {
@@ -497,11 +506,12 @@ Page {
                     .arg(JS.decorateFileSize(r.trash_size))
 
                     showInfoBanner(message, i18n.tr("Disk information"))
-                } else if (jobResult.code == "download" && jobResult.shouldShowTransferDialog) {
-                    showTransferDialog(selectedItem.displayName, jobResult.localName, true)
-                } else if (jobResult.code == "upload" && jobResult.shouldShowTransferDialog) {
-                    showTransferDialog(jobResult.localName /* TODO */, jobResult.localName, false)
                 }
+//                else if (jobResult.code == "download" && jobResult.shouldShowTransferDialog) {
+//                    showTransferDialog(selectedItem.displayName, jobResult.localName, true)
+//                } else if (jobResult.code == "upload" && jobResult.shouldShowTransferDialog) {
+//                    showTransferDialog(jobResult.localName /* TODO */, jobResult.localName, false)
+//                }
             } // else
         } // jobDone
 

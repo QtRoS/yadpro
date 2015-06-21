@@ -95,4 +95,8 @@ MainView {
     TrashBridge {
         id: trashBridge
     }
+
+    TransferManager {
+        id: transferManager
+    }
 }

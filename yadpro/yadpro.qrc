@@ -11,6 +11,7 @@
         <file>qml/utils/DataBase.js</file>
         <file>qml/utils/JsModule.js</file>
         <file>qml/Bridge.qml</file>
+        <file>qml/TransferManager.qml</file>
         <file>qml/YadApi.qml</file>
         <file>qml/YaD.qml</file>
         <file>qml/popups/AboutDialog.qml</file>

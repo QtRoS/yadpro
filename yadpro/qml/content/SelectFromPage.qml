@@ -10,13 +10,21 @@ Page {
     property var activeTransfer
     property list<ContentPeer> peers
 
-    function uploadFile(fileToUpload) {
-        // console.log("fileToUpload", fileToUpload)
-        var shortName = JS.getFileName(fileToUpload)
-        // console.log("shortName", shortName)
-        var path = JS.combinePath(bridge.currentFolder, shortName)
-        // console.log("path", path)
-        bridge.slotUpload(path, fileToUpload)
+    property var selectionCallback
+
+//    function uploadFile(fileToUpload) {
+//        // console.log("fileToUpload", fileToUpload)
+//        var shortName = JS.getFileName(fileToUpload)
+//        // console.log("shortName", shortName)
+//        var path = JS.combinePath(bridge.currentFolder, shortName)
+//        // console.log("path", path)
+//        bridge.slotUpload(path, fileToUpload)
+//    }
+
+    function finishSelection(filesToUpload) {
+        console.log(" finishSelection ", filesToUpload.length, selectionCallback)
+        if (selectionCallback)
+            selectionCallback(filesToUpload)
     }
 
     ContentPeerPicker {
@@ -26,7 +34,7 @@ Page {
         contentType: ContentType.All
 
         onPeerSelected: {
-            peer.selectionType = ContentTransfer.Single
+            peer.selectionType = ContentTransfer.Multiple
             root.activeTransfer = peer.request()
         }
 
@@ -45,7 +53,11 @@ Page {
         onStateChanged: {
             console.log("StateChanged: " + root.activeTransfer.state);
             if (root.activeTransfer.state === ContentTransfer.Charged) {
-                uploadFile(root.activeTransfer.items[0].url.toString())
+                var fileUrls = []
+                var items = root.activeTransfer.items
+                for (var i = 0; i < items.length; i++)
+                    fileUrls.push(items[i].url.toString())
+                finishSelection(fileUrls)
                 pageStack.pop()
             }
         }

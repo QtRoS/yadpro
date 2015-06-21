@@ -22,6 +22,15 @@ var ROOT_PATH = "disk:/"
 var TRASH_ROOT_PATH = "trash:/"
 var PATH_DELIMITER = "/"
 
+var STATE_INITIAL = "initial"
+var STATE_URLRECEIVED = "urlreceived"
+var STATE_INPROGRESS = "inprogress"
+var STATE_FINISHED = "finished"
+var STATE_ERROR = "error"
+
+var TRANSFER_DOWNLOAD = "download"
+var TRANSFER_UPLOAD = "upload"
+
 function decorateFileSize(size) {
     if (!size)
         return "0b"

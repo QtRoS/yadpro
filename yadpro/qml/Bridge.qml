@@ -61,14 +61,12 @@ BaseBridge {
         __addTask(yadApi.unpublish(path))
     }
 
-    function slotDownload(path, localName) {
+    function slotDownload(path) {
         __addTask(yadApi.download(path))
-        crossTaskStorage.localName = localName
     }
 
-    function slotUpload(path, localName) {
+    function slotUpload(path) {
         __addTask(yadApi.upload(path))
-        crossTaskStorage.localName = localName
     }
 
     function slotSaveToDisk(public_key) {
@@ -172,23 +170,21 @@ BaseBridge {
             {
                 if (resObj.response.href) {
 
-                    if (optKeep.downloadInBrowser) {
-                        Qt.openUrlExternally(resObj.response.href)
-                    } else {
-                        var fullFileName = CppUtils.prependWithDownloadsPath(crossTaskStorage.localName)
-                        jobResult.isError = !networkManager.download(resObj.response.href, fullFileName)
-                        jobResult.localName = fullFileName
-                        jobResult.shouldShowTransferDialog = true
-                    }
+                    jobResult.href = resObj.response.href
+                    //var fullFileName = CppUtils.prependWithDownloadsPath(crossTaskStorage.localName)
+                    //jobResult.isError = !networkManager.download(resObj.response.href, fullFileName)
+                    //jobResult.localName = fullFileName
+                    //jobResult.shouldShowTransferDialog = true
                 }
             }
             break;
             case "upload":
             {
                 if (resObj.response.href) {
-                    jobResult.isError = !networkManager.upload(resObj.response.href, crossTaskStorage.localName)
-                    jobResult.localName = crossTaskStorage.localName
-                    jobResult.shouldShowTransferDialog = true
+                    jobResult.href = resObj.response.href
+                    //jobResult.isError = !networkManager.upload(resObj.response.href, crossTaskStorage.localName)
+                    //jobResult.localName = crossTaskStorage.localName
+                    //jobResult.shouldShowTransferDialog = true
                 }
             }
             break;

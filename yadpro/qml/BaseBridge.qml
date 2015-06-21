@@ -11,6 +11,7 @@ QtObject {
         # jobResult
             @ isError
             @ code
+            @ href
             @ response
                 !status
                 !statusText
