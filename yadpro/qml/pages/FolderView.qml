@@ -130,32 +130,19 @@ Page {
             actions: ActionList {
                 id: popoverActionsList
 
-                //                Action {
-                //                    text: "TEST"
-                //                    onTriggered: {
-                //                        var downloadedFileUrl = "file:///home/phablet/.cache/yadpro/YaD/m_45tt1982.jpg"
-
-                //                        if (downloadedFileUrl.indexOf("file") !== 0)
-                //                            downloadedFileUrl = "file://" + downloadedFileUrl
-
-                //                        console.log("OPEN", downloadedFileUrl)
-                //                        pageStack.push(Qt.resolvedUrl("../content/OpenWithPage.qml"),
-                //                                       { "fileUrl" : downloadedFileUrl } )
-                //                    }
-                //                }
-
                 Action  {
                     text: i18n.tr("Upload...")
                     onTriggered: {
-                        selectionCallback(["/home/qtros/shorts.png", "/home/qtros/shorts2.png"])
-                        // TODO
+                        transferManager.addDownload(["disk:/progconcCPP.pdf"])
+                        transferManager.addUpload(["/home/qtros/progconcCPP_up.pdf"])
+                        // TODO BUG
                         //pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"),
                         //               { "selectionCallback" : selectionCallback } )
                     }
 
                     function selectionCallback(filesToUpload) {
                         for (var f in filesToUpload)
-                            console.log(filesToUpload[f])
+                            console.log("fileToUpload", filesToUpload[f])
                         transferManager.addUpload(filesToUpload)
                     }
                 }
@@ -308,8 +295,6 @@ Page {
             }
 
             function download() {
-                // TODO BUG
-                //bridge.slotDownload(selectedItem.href, selectedItem.displayName)
                 transferManager.addDownload([selectedItem.href])
             }
 
@@ -507,11 +492,6 @@ Page {
 
                     showInfoBanner(message, i18n.tr("Disk information"))
                 }
-//                else if (jobResult.code == "download" && jobResult.shouldShowTransferDialog) {
-//                    showTransferDialog(selectedItem.displayName, jobResult.localName, true)
-//                } else if (jobResult.code == "upload" && jobResult.shouldShowTransferDialog) {
-//                    showTransferDialog(jobResult.localName /* TODO */, jobResult.localName, false)
-//                }
             } // else
         } // jobDone
 

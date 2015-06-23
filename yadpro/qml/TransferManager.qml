@@ -65,6 +65,7 @@ Item {
             case JS.STATE_ERROR:
                 break;
             }
+            console.log(" -=-=-= UPLOAD STATE", currentUpload.state)
         }
 
         function doDownloadStep() {
@@ -150,7 +151,17 @@ Item {
     Connections {
         target: networkManager
 
-        onOperationProgress: console.log("PROGRESS", current, total)
-        onOperationFinished:  d.changeUploadState(JS.STATE_FINISHED)
+        onDownloadOperationProgress: console.log("onDownloadOperationProgress", current, total)
+        onDownloadOperationFinished: {
+            if (status === "success")
+                d.changeDownloadState(JS.STATE_FINISHED)
+            else d.changeDownloadState(JS.STATE_ERROR)
+        }
+        onUploadOperationProgress: console.log("onUploadOperationProgress", current, total)
+        onUploadOperationFinished: {
+            if (status === "success")
+                d.changeUploadState(JS.STATE_FINISHED)
+            else d.changeUploadState(JS.STATE_ERROR)
+        }
     }
 }

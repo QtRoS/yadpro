@@ -21,7 +21,7 @@ QtObject {
     signal operationProgress(int progress)
 
     /* Temporary storage for all crosstask operations. */
-    property var crossTaskStorage: { "localName" : ""}
+    // property var crossTaskStorage: { "localName" : ""}
 
     property string currentFolder: JS.ROOT_PATH
     property bool isBusy: taskCount > 0
