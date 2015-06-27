@@ -169,12 +169,7 @@ BaseBridge {
             case "download":
             {
                 if (resObj.response.href) {
-
                     jobResult.href = resObj.response.href
-                    //var fullFileName = CppUtils.prependWithDownloadsPath(crossTaskStorage.localName)
-                    //jobResult.isError = !networkManager.download(resObj.response.href, fullFileName)
-                    //jobResult.localName = fullFileName
-                    //jobResult.shouldShowTransferDialog = true
                 }
             }
             break;
@@ -182,9 +177,6 @@ BaseBridge {
             {
                 if (resObj.response.href) {
                     jobResult.href = resObj.response.href
-                    //jobResult.isError = !networkManager.upload(resObj.response.href, crossTaskStorage.localName)
-                    //jobResult.localName = crossTaskStorage.localName
-                    //jobResult.shouldShowTransferDialog = true
                 }
             }
             break;

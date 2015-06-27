@@ -131,19 +131,26 @@ Page {
                 id: popoverActionsList
 
                 Action  {
+                    text: i18n.tr("TEST")
+                    onTriggered: {
+                        // transferManager.addDownload(["disk:/progconcCPP.pdf"])
+                        //transferManager.addDownload(["disk:/water_money.txt"]) // "disk:/progconcCPP.pdf",
+                        // transferManager.addUpload(["/home/qtros/bug_search.png"])
+                        transferManager.addUpload(["/home/qtros/progconcCPP_up.pdf"])
+                        pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
+                    }
+                }
+
+                Action  {
                     text: i18n.tr("Upload...")
                     onTriggered: {
-                        transferManager.addDownload(["disk:/progconcCPP.pdf"])
-                        transferManager.addUpload(["/home/qtros/progconcCPP_up.pdf"])
-                        // TODO BUG
-                        //pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"),
-                        //               { "selectionCallback" : selectionCallback } )
+                        pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"),
+                                       { "selectionCallback" : uploadFiles } )
                     }
 
-                    function selectionCallback(filesToUpload) {
-                        for (var f in filesToUpload)
-                            console.log("fileToUpload", filesToUpload[f])
+                    function uploadFiles(filesToUpload) {
                         transferManager.addUpload(filesToUpload)
+                        PopupUtils.open(Qt.resolvedUrl("TransferMonitorPage.qml"))
                     }
                 }
 
@@ -296,6 +303,7 @@ Page {
 
             function download() {
                 transferManager.addDownload([selectedItem.href])
+                pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
             }
 
             function copy() {
@@ -378,7 +386,8 @@ Page {
                     bridge.slotMoveToFolder(model.displayName)
                 else if (isTransferInProgress) {
                     selectedItem = model
-                    bridge.slotDownload(selectedItem.href, selectedItem.displayName)
+                    transferManager.addDownload([selectedItem.href])
+                    pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
                 }
             }
         }
@@ -419,13 +428,13 @@ Page {
                     bridge.slotMoveToFolder(model.displayName)
                 else if (isTransferInProgress) {
                     selectedItem = model
-                    bridge.slotDownload(selectedItem.href, selectedItem.displayName)
+                    transferManager.addDownload([selectedItem.href])
+                    pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
                 }
             }
 
             onContextMenuRequested: {
                 selectedItem = model
-                // gridView.currentIndex = selectedItem.index
                 PopupUtils.open(contextMenuComponent, gridView.currentItem)
             }
         } // Delegate

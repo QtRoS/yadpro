@@ -121,6 +121,11 @@ void NetworkManager::slotDownloadFinished()
         cleanup(OpDownload, true);
         makeRequest(location, OpDownload);
     }
+    else
+    {
+        emit downloadOperationFinished("success");
+        cleanup(OpDownload);
+    }
 }
 
 void NetworkManager::slotUploadFinished()

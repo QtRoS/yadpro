@@ -10,7 +10,8 @@ Item {
     function addUpload(urls) {
         for (var i = 0; i < urls.length; i++) {
             var obj = { "type" : JS.TRANSFER_UPLOAD, "url" : urls[i],
-                "state" : JS.STATE_INITIAL, "operationUrl" : "" }
+                "state" : JS.STATE_INITIAL, "operationUrl" : "",
+                "name" : JS.getFileName(urls[i]), "progress" : 0 }
             transferModel.insert(0, obj)
         }
 
@@ -20,11 +21,42 @@ Item {
     function addDownload(urls) {
         for (var i = 0; i < urls.length; i++) {
             var obj = { "type" : JS.TRANSFER_DOWNLOAD, "url" : urls[i],
-                "state" : JS.STATE_INITIAL }
+                "state" : JS.STATE_INITIAL, "operationUrl" : "", "localUrl" : "",
+                "name" : JS.getFileName(urls[i]), "progress" : 0 }
             transferModel.insert(0, obj)
         }
 
         d.doDownloadStep()
+    }
+
+    function retry(i) {
+        if (i >= transferModel.count)
+            return
+
+        var itm = transferModel.get(i)
+        itm.state = JS.STATE_INITIAL
+        if (itm.type == JS.TRANSFER_DOWNLOAD)
+            d.doDownloadStep()
+        else d.doUploadStep()
+    }
+
+    function stop(i) {
+        if (i >= transferModel.count)
+            return
+
+        var itm = transferModel.get(i)
+
+        if (itm.type == JS.TRANSFER_DOWNLOAD) {
+            if (itm.state === JS.STATE_INPROGRESS)
+                networkManager.abortDownload()
+            itm.state = JS.STATE_ERROR
+            d.doDownloadStep()
+        } else {
+            if (itm.state === JS.STATE_INPROGRESS)
+                networkManager.abortUpload()
+            itm.state = JS.STATE_ERROR
+            d.doUploadStep()
+        }
     }
 
     property QtObject d: QtObject {
@@ -34,7 +66,8 @@ Item {
 
         function doUploadStep() {
             // Check if we should pick next task.
-            if (!currentUpload || currentUpload.state === JS.STATE_FINISHED) {
+            if (!currentUpload || currentUpload.state === JS.STATE_FINISHED ||
+                    currentUpload.state === JS.STATE_ERROR) {
                 currentUpload = getNextUpload()
 
                 // Nothing to do.
@@ -70,7 +103,8 @@ Item {
 
         function doDownloadStep() {
             // Check if we should pick next task.
-            if (!currentDownload || currentDownload.state === JS.STATE_FINISHED) {
+            if (!currentDownload || currentDownload.state === JS.STATE_FINISHED ||
+                    currentDownload.state === JS.STATE_ERROR) {
                 currentDownload = getNextDownload()
                 console.log(JSON.stringify(currentDownload))
 
@@ -86,8 +120,8 @@ Item {
                 break;
             case JS.STATE_URLRECEIVED:
                 var shortName = JS.getFileName(currentDownload.url)
-                var fullFileName = CppUtils.prependWithDownloadsPath(shortName)
-                var isSucces = networkManager.download(currentDownload.operationUrl, fullFileName)
+                currentDownload.localUrl = CppUtils.prependWithDownloadsPath(shortName)
+                var isSucces = networkManager.download(currentDownload.operationUrl, currentDownload.localUrl)
                 if (!isSucces) {
                     changeDownloadState(JS.STATE_ERROR)
                     return
@@ -139,11 +173,19 @@ Item {
         target: bridge
         onJobDone: {
             if (jobResult.code == "download") {
-                d.currentDownload.operationUrl = jobResult.href
-                d.changeDownloadState(JS.STATE_URLRECEIVED)
+                if (jobResult.isError) {
+                    d.changeDownloadState(JS.STATE_ERROR)
+                } else {
+                    d.currentDownload.operationUrl = jobResult.href
+                    d.changeDownloadState(JS.STATE_URLRECEIVED)
+                }
             } else if (jobResult.code == "upload") {
-                d.currentUpload.operationUrl = jobResult.href
-                d.changeUploadState(JS.STATE_URLRECEIVED)
+                if (jobResult.isError) {
+                    d.changeUploadState(JS.STATE_ERROR)
+                } else {
+                    d.currentUpload.operationUrl = jobResult.href
+                    d.changeUploadState(JS.STATE_URLRECEIVED)
+                }
             }
         } // jobDone
     }
@@ -151,13 +193,13 @@ Item {
     Connections {
         target: networkManager
 
-        onDownloadOperationProgress: console.log("onDownloadOperationProgress", current, total)
+        onDownloadOperationProgress: d.currentDownload.progress = 100.0 * current / total //console.log("onDownloadOperationProgress", current, total)
         onDownloadOperationFinished: {
             if (status === "success")
                 d.changeDownloadState(JS.STATE_FINISHED)
             else d.changeDownloadState(JS.STATE_ERROR)
         }
-        onUploadOperationProgress: console.log("onUploadOperationProgress", current, total)
+        onUploadOperationProgress: d.currentUpload.progress = 100.0 * current / total  //console.log("onUploadOperationProgress", current, total)
         onUploadOperationFinished: {
             if (status === "success")
                 d.changeUploadState(JS.STATE_FINISHED)
