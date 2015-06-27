@@ -40,6 +40,7 @@ Page {
                 actions: [
                     Action {
                         iconName: "delete"
+                        onTriggered: transferManager.remove(model.index)
                     }
                 ]
             }
@@ -64,7 +65,7 @@ Page {
                         visible: model.state == JS.STATE_FINISHED && model.type == JS.TRANSFER_DOWNLOAD
                         onTriggered: {
                             pageStack.push(Qt.resolvedUrl("../content/OpenWithPage.qml"),
-                                           { "fileUrl" : model.localUrl } )
+                                           { "fileUrl" : ("file://" + model.localUrl) } )
                         }
                     }
                 ]
@@ -110,12 +111,28 @@ Page {
 
             Label {
                 id: stateLbl
-                text: model.state
+                text: decorateState(model.state)
                 textFormat: Text.PlainText
                 anchors {
                     right: parent.right
                     bottom: parent.bottom
                     margins: units.gu(1)
+                }
+
+                function decorateState(state) {
+                    switch (state)
+                    {
+                    case JS.STATE_INITIAL:
+                        return i18n.tr("Waiting")
+                    case JS.STATE_URLRECEIVED:
+                        return i18n.tr("Url received")
+                    case JS.STATE_INPROGRESS:
+                        return i18n.tr("In progress")
+                    case JS.STATE_ERROR:
+                        return i18n.tr("Error")
+                    case JS.STATE_FINISHED:
+                        return i18n.tr("Finished")
+                    }
                 }
             }
         }

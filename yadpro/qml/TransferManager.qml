@@ -59,6 +59,11 @@ Item {
         }
     }
 
+    function remove(i) {
+        stop(i)
+        transferModel.remove(i, 1)
+    }
+
     property QtObject d: QtObject {
 
         property var currentUpload: null

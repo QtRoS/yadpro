@@ -53,12 +53,13 @@ Page {
         onStateChanged: {
             console.log("StateChanged: " + root.activeTransfer.state);
             if (root.activeTransfer.state === ContentTransfer.Charged) {
-                var fileUrls = []
-                var items = root.activeTransfer.items
-                for (var i = 0; i < items.length; i++)
-                    fileUrls.push(items[i].url.toString())
-                finishSelection(fileUrls)
                 pageStack.pop()
+
+                var fileUrls = []
+                for (var i = 0; i < root.activeTransfer.items.length; i++)
+                    fileUrls.push(items[i].url.toString())
+
+                finishSelection(fileUrls)
             }
         }
     }

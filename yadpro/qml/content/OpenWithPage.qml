@@ -23,7 +23,7 @@ Page {
     }
 
     function __exportItemsWhenPossible(url) {
-        //console.log("__exportItemsWhenPossible", root.activeTransfer.state, url)
+        console.log("__exportItemsWhenPossible", root.activeTransfer.state, url)
         if (root.activeTransfer.state === ContentTransfer.InProgress) {
             root.activeTransfer.items = [ resultComponent.createObject(root, {"url": url}) ]
             root.activeTransfer.state = ContentTransfer.Charged
@@ -52,7 +52,7 @@ Page {
     Connections {
         target: root.activeTransfer ? root.activeTransfer : null
         onStateChanged: {
-            // console.log("curTransfer StateChanged: " + root.activeTransfer.state);
+            console.log("curTransfer StateChanged: " + root.activeTransfer.state);
             __exportItemsWhenPossible(root.fileUrl)
         }
     }

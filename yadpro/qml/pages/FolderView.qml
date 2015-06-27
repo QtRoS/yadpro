@@ -96,6 +96,13 @@ Page {
                         })
     }
 
+    function uploadFiles(filesToUpload) {
+        for (var x in filesToUpload)
+            console.log(filesToUpload[x])
+        transferManager.addUpload(filesToUpload)
+        pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
+    }
+
     head.actions: [
         Action {
             property bool modeIsRefresh: !bridge.isBusy
@@ -136,7 +143,7 @@ Page {
                         // transferManager.addDownload(["disk:/progconcCPP.pdf"])
                         //transferManager.addDownload(["disk:/water_money.txt"]) // "disk:/progconcCPP.pdf",
                         // transferManager.addUpload(["/home/qtros/bug_search.png"])
-                        transferManager.addUpload(["/home/qtros/progconcCPP_up.pdf"])
+                        //transferManager.addUpload(["/home/qtros/progconcCPP_up.pdf"])
                         pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
                     }
                 }
@@ -146,11 +153,6 @@ Page {
                     onTriggered: {
                         pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"),
                                        { "selectionCallback" : uploadFiles } )
-                    }
-
-                    function uploadFiles(filesToUpload) {
-                        transferManager.addUpload(filesToUpload)
-                        PopupUtils.open(Qt.resolvedUrl("TransferMonitorPage.qml"))
                     }
                 }
 
