@@ -34,6 +34,17 @@ Page {
     property string fileToMoveOrCopy: ""
     property var selectedItem: null
 
+
+    property bool isTransferInProgress: false
+    Connections {
+        target: hubListener
+        onExportTransferActiveChanged: {
+            isTransferInProgress = hubListener.exportTransferActive
+            var curView = optKeep.useGridView ? gridView : simpleList
+            curView.positionViewAtBeginning()
+        }
+    }
+
     visible: false
     title: JS.isRootPath(bridge.currentFolder) ? i18n.tr("My Disk") : JS.decorateTitle(bridge.currentFolder)
 
@@ -41,35 +52,6 @@ Page {
         optKeep.useGridViewChanged.connect(viewChanged)
         viewChanged()
     }
-
-    // --==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==
-    property QtObject exportContext: QtObject {
-        property var transfer: null
-        readonly property Item visualParent: folderView
-    }
-
-    Connections {
-        target: ContentHub
-        onExportRequested: {
-            console.log("---- CONTENT REQUEST:", JSON.stringify(transfer))
-            exportContext.transfer = transfer
-
-            // Scroll to top (user will be able to see tip).
-            var curView = optKeep.useGridView ? gridView : simpleList
-            curView.positionViewAtBeginning()
-        }
-    }
-
-    property bool isTransferInProgress: exportContext.transfer != null
-
-    function cancelTransfer() {
-        if (exportContext.transfer) {
-            exportContext.transfer.state = ContentTransfer.Aborted
-            exportContext.transfer = null
-        }
-    }
-
-    // --==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==
 
     function viewChanged() {
         var v = optKeep.useGridView
@@ -84,16 +66,6 @@ Page {
     function showInfoBanner(text, title, iconSource) {
         PopupUtils.open(Qt.resolvedUrl("../popups/InfoBanner.qml"),
                         null, { "text" : text, "title" : title} )
-    }
-
-    function showTransferDialog(displayName, localName, isDownload) {
-        var cntx = isTransferInProgress ? exportContext : null
-        PopupUtils.open(Qt.resolvedUrl("../popups/TransferDialog.qml"), null,
-                        { "displayName" : displayName,
-                            "isDownload" : isDownload,
-                            "localName" : localName,
-                            "transferContext" : cntx
-                        })
     }
 
     function uploadFiles(filesToUpload) {
@@ -138,14 +110,8 @@ Page {
                 id: popoverActionsList
 
                 Action  {
-                    text: i18n.tr("TEST")
-                    onTriggered: {
-                        // transferManager.addDownload(["disk:/progconcCPP.pdf"])
-                        //transferManager.addDownload(["disk:/water_money.txt"]) // "disk:/progconcCPP.pdf",
-                        // transferManager.addUpload(["/home/qtros/bug_search.png"])
-                        //transferManager.addUpload(["/home/qtros/progconcCPP_up.pdf"])
-                        pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
-                    }
+                    text: i18n.tr("Transfer monitor")
+                    onTriggered: pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
                 }
 
                 Action  {
@@ -365,7 +331,7 @@ Page {
 
         header: MyComponents.FolderViewHeader {
             isActive: isTransferInProgress
-            onCanceled: cancelTransfer()
+            onCanceled: hubListener.cancelTransfer()
         }
 
         delegate: MyComponents.ListDelegate {
@@ -400,7 +366,7 @@ Page {
 
         header: MyComponents.FolderViewHeader {
             isActive: isTransferInProgress
-            onCanceled: cancelTransfer()
+            onCanceled: hubListener.cancelTransfer()
         }
 
         anchors {

@@ -198,13 +198,23 @@ Item {
     Connections {
         target: networkManager
 
-        onDownloadOperationProgress: d.currentDownload.progress = 100.0 * current / total //console.log("onDownloadOperationProgress", current, total)
+        onDownloadOperationProgress: {
+            //console.log("onDownloadOperationProgress", current, total)
+            if (d.currentDownload.progress != 100.0 && total == 0)
+                d.currentDownload.progress = 100.0
+            else d.currentDownload.progress = 100.0 * current / total
+        }
         onDownloadOperationFinished: {
             if (status === "success")
                 d.changeDownloadState(JS.STATE_FINISHED)
             else d.changeDownloadState(JS.STATE_ERROR)
         }
-        onUploadOperationProgress: d.currentUpload.progress = 100.0 * current / total  //console.log("onUploadOperationProgress", current, total)
+        onUploadOperationProgress: {
+            //console.log("onUploadOperationProgress", current, total)
+            if (d.currentUpload.progress != 100.0 && total == 0)
+                d.currentUpload.progress = 100.0
+            else d.currentUpload.progress = 100.0 * current / total
+        }
         onUploadOperationFinished: {
             if (status === "success")
                 d.changeUploadState(JS.STATE_FINISHED)

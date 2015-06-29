@@ -99,4 +99,8 @@ MainView {
     TransferManager {
         id: transferManager
     }
+
+    ContentHubListener {
+        id: hubListener
+    }
 }

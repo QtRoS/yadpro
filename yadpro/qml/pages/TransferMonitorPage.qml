@@ -17,6 +17,7 @@
 */
 
 import QtQuick 2.4
+import Ubuntu.Content 1.1
 import Ubuntu.Components 1.2
 
 import "../utils/JsModule.js" as JS
@@ -57,15 +58,18 @@ Page {
                         onTriggered: transferManager.retry(model.index)
                     },
                     Action {
-                        iconName: "ok"
-                        visible: false && model.state == JS.STATE_FINISHED && model.type == JS.TRANSFER_DOWNLOAD
-                    },
-                    Action {
-                        iconName: "go-to"
+                        iconName: hubListener.exportTransferActive ? "ok" : "go-to"
                         visible: model.state == JS.STATE_FINISHED && model.type == JS.TRANSFER_DOWNLOAD
                         onTriggered: {
-                            pageStack.push(Qt.resolvedUrl("../content/OpenWithPage.qml"),
-                                           { "fileUrl" : ("file://" + model.localUrl) } )
+                            if (hubListener.exportTransferActive) {
+                                var res = fileSelectorResultComponent.createObject(pageStack, {"url": ("file://" + model.localUrl) })
+                                hubListener.exportTransfer.items = [res]
+                                hubListener.exportTransfer.state = ContentTransfer.Charged
+                                hubListener.exportTransfer = null
+                            } else {
+                                pageStack.push(Qt.resolvedUrl("../content/OpenWithPage.qml"),
+                                               { "fileUrl" : ("file://" + model.localUrl) } )
+                            }
                         }
                     }
                 ]
@@ -138,37 +142,8 @@ Page {
         }
     } // ListView
 
-//    ListModel {
-//        id: transferModel
-
-//        ListElement {
-//            name: "Apple"
-//            state: "initial"
-//            progress: 0
-//            type: "download"
-//        }
-//        ListElement {
-//            name: "Orange Orange Orange Orange Orange Orange Orange"
-//            state: "urlreceived"
-//            progress: 0
-//            type: "upload"
-//        }
-//        ListElement {
-//            name: "Banana"
-//            state: "inprogress"
-//            progress: 50
-//            type: "download"
-//        }
-//        ListElement {
-//            name: "Mirror, mirror on the wall, who’s the fairest of them all"
-//            state: "finished"
-//            progress: 100
-//            type: "upload"
-//        }
-//        ListElement {
-//            name: "Mirror's edge"
-//            state: "error"
-//            progress: 0
-//        }
-//    }
+    Component {
+        id: fileSelectorResultComponent
+        ContentItem { }
+    }
 }
