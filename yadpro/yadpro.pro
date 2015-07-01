@@ -47,7 +47,9 @@ OTHER_FILES +=  yadpro.apparmor \
     qml/BaseBridge.qml \
     qml/TrashBridge.qml \
     qml/pages/TrashView.qml \
-    qml/TransferManager.qml
+    qml/TransferManager.qml \
+    qml/pages/TransferMonitorPage.qml \
+    qml/ContentHubListener.qml
 
 
 #specify where the config files are installed to

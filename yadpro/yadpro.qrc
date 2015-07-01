@@ -30,6 +30,8 @@
         <file>qml/BaseBridge.qml</file>
         <file>qml/TrashBridge.qml</file>
         <file>qml/pages/TrashView.qml</file>
+        <file>qml/pages/TransferMonitorPage.qml</file>
+        <file>qml/ContentHubListener.qml</file>
     </qresource>
     <qresource prefix="/img">
         <file>qml/images/audio.png</file>
@@ -42,7 +44,6 @@
         <file>qml/images/djvu.png</file>
         <file>qml/images/doc.png</file>
         <file>qml/images/exe.png</file>
-        <file>qml/images/fail.png</file>
         <file>qml/images/file_unknown.png</file>
         <file>qml/images/folder.png</file>
         <file>qml/images/go-to.svg</file>
@@ -54,16 +55,18 @@
         <file>qml/images/main_ru.ts</file>
         <file>qml/images/pdf.png</file>
         <file>qml/images/python.png</file>
-        <file>qml/images/refresh.png</file>
         <file>qml/images/ruby.png</file>
         <file>qml/images/settings.svg</file>
         <file>qml/images/shared3.png</file>
         <file>qml/images/splashScreen.png</file>
-        <file>qml/images/success.png</file>
         <file>qml/images/txt.png</file>
         <file>qml/images/unknown.png</file>
         <file>qml/images/video.png</file>
         <file>qml/images/xml.png</file>
         <file>qml/images/zip.png</file>
+        <file>qml/images/download_c.png</file>
+        <file>qml/images/download_d.png</file>
+        <file>qml/images/upload_c.png</file>
+        <file>qml/images/upload_d.png</file>
     </qresource>
 </RCC>

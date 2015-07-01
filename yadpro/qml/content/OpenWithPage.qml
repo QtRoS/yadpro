@@ -13,7 +13,7 @@ Page {
 
     Component.onCompleted: {
         var contentType = ContentTypeResolver.resolveContentType(fileUrl)
-        console.log("Resolved contenttype: " + contentType)
+        //console.log("Resolved contenttype: " + contentType)
         peerPicker.contentType = contentType
     }
 
@@ -52,7 +52,7 @@ Page {
     Connections {
         target: root.activeTransfer ? root.activeTransfer : null
         onStateChanged: {
-            // console.log("curTransfer StateChanged: " + root.activeTransfer.state);
+            //console.log("curTransfer StateChanged: " + root.activeTransfer.state);
             __exportItemsWhenPossible(root.fileUrl)
         }
     }

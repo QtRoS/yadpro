@@ -12,17 +12,7 @@ Page {
 
     property var selectionCallback
 
-//    function uploadFile(fileToUpload) {
-//        // console.log("fileToUpload", fileToUpload)
-//        var shortName = JS.getFileName(fileToUpload)
-//        // console.log("shortName", shortName)
-//        var path = JS.combinePath(bridge.currentFolder, shortName)
-//        // console.log("path", path)
-//        bridge.slotUpload(path, fileToUpload)
-//    }
-
     function finishSelection(filesToUpload) {
-        console.log(" finishSelection ", filesToUpload.length, selectionCallback)
         if (selectionCallback)
             selectionCallback(filesToUpload)
     }
@@ -53,12 +43,13 @@ Page {
         onStateChanged: {
             console.log("StateChanged: " + root.activeTransfer.state);
             if (root.activeTransfer.state === ContentTransfer.Charged) {
-                var fileUrls = []
-                var items = root.activeTransfer.items
-                for (var i = 0; i < items.length; i++)
-                    fileUrls.push(items[i].url.toString())
-                finishSelection(fileUrls)
                 pageStack.pop()
+
+                var fileUrls = []
+                for (var i = 0; i < root.activeTransfer.items.length; i++)
+                    fileUrls.push(root.activeTransfer.items[i].url.toString())
+
+                finishSelection(fileUrls)
             }
         }
     }

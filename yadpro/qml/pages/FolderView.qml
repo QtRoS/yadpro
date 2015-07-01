@@ -34,6 +34,17 @@ Page {
     property string fileToMoveOrCopy: ""
     property var selectedItem: null
 
+
+    property bool isTransferInProgress: false
+    Connections {
+        target: hubListener
+        onExportTransferActiveChanged: {
+            isTransferInProgress = hubListener.exportTransferActive
+            var curView = optKeep.useGridView ? gridView : simpleList
+            curView.positionViewAtBeginning()
+        }
+    }
+
     visible: false
     title: JS.isRootPath(bridge.currentFolder) ? i18n.tr("My Disk") : JS.decorateTitle(bridge.currentFolder)
 
@@ -41,35 +52,6 @@ Page {
         optKeep.useGridViewChanged.connect(viewChanged)
         viewChanged()
     }
-
-    // --==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==
-    property QtObject exportContext: QtObject {
-        property var transfer: null
-        readonly property Item visualParent: folderView
-    }
-
-    Connections {
-        target: ContentHub
-        onExportRequested: {
-            console.log("---- CONTENT REQUEST:", JSON.stringify(transfer))
-            exportContext.transfer = transfer
-
-            // Scroll to top (user will be able to see tip).
-            var curView = optKeep.useGridView ? gridView : simpleList
-            curView.positionViewAtBeginning()
-        }
-    }
-
-    property bool isTransferInProgress: exportContext.transfer != null
-
-    function cancelTransfer() {
-        if (exportContext.transfer) {
-            exportContext.transfer.state = ContentTransfer.Aborted
-            exportContext.transfer = null
-        }
-    }
-
-    // --==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==--==
 
     function viewChanged() {
         var v = optKeep.useGridView
@@ -86,14 +68,17 @@ Page {
                         null, { "text" : text, "title" : title} )
     }
 
-    function showTransferDialog(displayName, localName, isDownload) {
-        var cntx = isTransferInProgress ? exportContext : null
-        PopupUtils.open(Qt.resolvedUrl("../popups/TransferDialog.qml"), null,
-                        { "displayName" : displayName,
-                            "isDownload" : isDownload,
-                            "localName" : localName,
-                            "transferContext" : cntx
-                        })
+    function uploadFiles(filesToUpload) {
+        addTransfer(filesToUpload, true)
+    }
+
+    function addTransfer(files, isUpload) {
+        if (isUpload)
+            transferManager.addUpload(files)
+        else transferManager.addDownload(files)
+
+        if (optKeep.showTransferManager)
+            pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
     }
 
     head.actions: [
@@ -130,33 +115,11 @@ Page {
             actions: ActionList {
                 id: popoverActionsList
 
-                //                Action {
-                //                    text: "TEST"
-                //                    onTriggered: {
-                //                        var downloadedFileUrl = "file:///home/phablet/.cache/yadpro/YaD/m_45tt1982.jpg"
-
-                //                        if (downloadedFileUrl.indexOf("file") !== 0)
-                //                            downloadedFileUrl = "file://" + downloadedFileUrl
-
-                //                        console.log("OPEN", downloadedFileUrl)
-                //                        pageStack.push(Qt.resolvedUrl("../content/OpenWithPage.qml"),
-                //                                       { "fileUrl" : downloadedFileUrl } )
-                //                    }
-                //                }
-
                 Action  {
                     text: i18n.tr("Upload...")
                     onTriggered: {
-                        selectionCallback(["/home/qtros/shorts.png", "/home/qtros/shorts2.png"])
-                        // TODO
-                        //pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"),
-                        //               { "selectionCallback" : selectionCallback } )
-                    }
-
-                    function selectionCallback(filesToUpload) {
-                        for (var f in filesToUpload)
-                            console.log(filesToUpload[f])
-                        transferManager.addUpload(filesToUpload)
+                        pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"),
+                                       { "selectionCallback" : uploadFiles } )
                     }
                 }
 
@@ -187,6 +150,11 @@ Page {
                             fileToMoveOrCopy = ""
                         }
                     }
+                }
+
+                Action  {
+                    text: i18n.tr("Transfer monitor...")
+                    onTriggered: pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
                 }
 
                 Action  {
@@ -308,9 +276,7 @@ Page {
             }
 
             function download() {
-                // TODO BUG
-                //bridge.slotDownload(selectedItem.href, selectedItem.displayName)
-                transferManager.addDownload([selectedItem.href])
+                addTransfer([selectedItem.href])
             }
 
             function copy() {
@@ -370,7 +336,7 @@ Page {
 
         header: MyComponents.FolderViewHeader {
             isActive: isTransferInProgress
-            onCanceled: cancelTransfer()
+            onCanceled: hubListener.cancelTransfer()
         }
 
         delegate: MyComponents.ListDelegate {
@@ -393,7 +359,7 @@ Page {
                     bridge.slotMoveToFolder(model.displayName)
                 else if (isTransferInProgress) {
                     selectedItem = model
-                    bridge.slotDownload(selectedItem.href, selectedItem.displayName)
+                    addTransfer([selectedItem.href])
                 }
             }
         }
@@ -404,7 +370,7 @@ Page {
 
         header: MyComponents.FolderViewHeader {
             isActive: isTransferInProgress
-            onCanceled: cancelTransfer()
+            onCanceled: hubListener.cancelTransfer()
         }
 
         anchors {
@@ -434,13 +400,12 @@ Page {
                     bridge.slotMoveToFolder(model.displayName)
                 else if (isTransferInProgress) {
                     selectedItem = model
-                    bridge.slotDownload(selectedItem.href, selectedItem.displayName)
+                    addTransfer([selectedItem.href])
                 }
             }
 
             onContextMenuRequested: {
                 selectedItem = model
-                // gridView.currentIndex = selectedItem.index
                 PopupUtils.open(contextMenuComponent, gridView.currentItem)
             }
         } // Delegate
@@ -471,6 +436,7 @@ Page {
         opacity: 0.25
         fontSize: "x-large"
         visible: bridge.folderModel.count == 0
+        textFormat: Text.PlainText
     } // Label
 
     ActivityIndicator{
@@ -507,11 +473,6 @@ Page {
 
                     showInfoBanner(message, i18n.tr("Disk information"))
                 }
-//                else if (jobResult.code == "download" && jobResult.shouldShowTransferDialog) {
-//                    showTransferDialog(selectedItem.displayName, jobResult.localName, true)
-//                } else if (jobResult.code == "upload" && jobResult.shouldShowTransferDialog) {
-//                    showTransferDialog(jobResult.localName /* TODO */, jobResult.localName, false)
-//                }
             } // else
         } // jobDone
 

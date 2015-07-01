@@ -18,31 +18,25 @@
 
 import QtQuick 2.4
 import Ubuntu.Components 1.2
-import Ubuntu.Components.Popups 1.0
+import Ubuntu.Content 1.1
 
-import "../popups"
+Item {
 
-Dialog {
-    id: aboutDialog
-    title: i18n.tr("<font color='#dd4814'>YaD Pro</font>")
-    text: i18n.tr("Unofficial <font color='#dd4814'>Ubuntu Phone</font> client of <br><a href='http://disk.yandex.com/'>Yandex.Disk</a> free file storage service<br> developed by Roman Shchekin <br> aka <font color='#dd4814'>QtRoS</font><br>mrqtros@gmail.com") + "<br>v2.1.4"
+    property var exportTransfer: null
+    property bool exportTransferActive: exportTransfer != null
 
-    Item {
-        height: units.gu(8)
-        Image {
-            asynchronous: true
-            sourceSize.width: units.gu(8)
-            sourceSize.height: units.gu(8)
-            source: "/img/qml/images/splashScreen.png"
-            anchors.centerIn: parent
+    function cancelTransfer() {
+        if (exportTransfer) {
+            exportTransfer.state = ContentTransfer.Aborted
+            exportTransfer = null
         }
     }
 
-    Button {
-        text: i18n.tr("Ok")
-        color: UbuntuColors.green
-        onClicked: {
-            aboutDialog.hide()
+    Connections {
+        target: ContentHub
+        onExportRequested: {
+            // console.log("---- CONTENT REQUEST:", JSON.stringify(transfer))
+            exportTransfer = transfer
         }
     }
 }

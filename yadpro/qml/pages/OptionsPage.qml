@@ -32,7 +32,7 @@ Page {
     function updateInfoFromOptions() {
         pageItself.preventSave = true
 
-        chbDefDir.checked = optKeep.downloadInBrowser
+        chbShowTransferManager.checked = optKeep.showTransferManager
         swUseGridView.checked = optKeep.useGridView
         swShowFileTime.checked = optKeep.showFileTime
         swDownloadPreviews.checked = optKeep.downloadPreviews
@@ -106,10 +106,10 @@ Page {
         ListItem.Standard {
             id: useDefListItem
 
-            text: i18n.tr("Download in browser")
+            text: i18n.tr("Show transfers automatically")
             width: parent.width
             control: Switch {
-                id: chbDefDir
+                id: chbShowTransferManager
 
                 anchors.right: parent.right
 
@@ -117,10 +117,7 @@ Page {
                     if (pageItself.preventSave)
                         return
 
-                    optKeep.downloadInBrowser = checked
-
-                    if (checked)
-                        PopupUtils.open(compDialog)
+                    optKeep.showTransferManager = checked
                 }
             }
         }
@@ -147,20 +144,4 @@ Page {
             }
         }
     } // Column
-
-    Component {
-        id: compDialog
-
-        Dialog {
-            id: infoDialog
-
-            text: i18n.tr("You should login into Yandex.Disk in browser before use this method")
-            Button {
-                text: i18n.tr("Ok")
-                onClicked: {
-                    infoDialog.hide()
-                }
-            }
-        }
-    } // Component
 }

@@ -60,7 +60,7 @@ MainView {
             id: loginPage
 
             onAuthPassed: {
-                console.log("TOKEN", token)
+                //console.log("TOKEN", token)
 
                 optKeep.token = token
                 previewCache.token = token
@@ -98,5 +98,9 @@ MainView {
 
     TransferManager {
         id: transferManager
+    }
+
+    ContentHubListener {
+        id: hubListener
     }
 }
