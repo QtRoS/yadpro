@@ -24,7 +24,7 @@ import "../utils/JsModule.js" as JS
 
 
 Page {
-    title: i18n.tr("Simple")
+    title: i18n.tr("Transfer monitor")
     flickable: null
 
     ListView {
@@ -159,7 +159,7 @@ Page {
         text: i18n.tr("Empty list")
         opacity: 0.25
         fontSize: "x-large"
-        visible: transferManager.transferModel.count == 0
+        visible: !transferManager.transferModel.count
         textFormat: Text.PlainText
     } // Label
 }
