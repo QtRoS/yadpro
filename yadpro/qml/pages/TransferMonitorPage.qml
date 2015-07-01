@@ -111,6 +111,7 @@ Page {
                 value: model.progress
                 minimumValue: 0
                 maximumValue: 100
+                indeterminate: !value && model.state !== JS.STATE_ERROR
             }
 
             Label {

@@ -103,7 +103,7 @@ Item {
             case JS.STATE_ERROR:
                 break;
             }
-            console.log(" -=-=-= UPLOAD STATE", currentUpload.state)
+            //console.log(" -=-=-= UPLOAD STATE", currentUpload.state)
         }
 
         function doDownloadStep() {
@@ -111,7 +111,6 @@ Item {
             if (!currentDownload || currentDownload.state === JS.STATE_FINISHED ||
                     currentDownload.state === JS.STATE_ERROR) {
                 currentDownload = getNextDownload()
-                console.log(JSON.stringify(currentDownload))
 
                 // Nothing to do.
                 if (!currentDownload)
@@ -141,6 +140,7 @@ Item {
             case JS.STATE_ERROR:
                 break;
             }
+            //console.log(" -=-=-= DOWNLOAD STATE", currentDownload.state)
         }
 
         function getNextUpload() {

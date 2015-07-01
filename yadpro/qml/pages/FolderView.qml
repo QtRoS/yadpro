@@ -116,11 +116,6 @@ Page {
                 id: popoverActionsList
 
                 Action  {
-                    text: i18n.tr("Transfer monitor")
-                    onTriggered: pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
-                }
-
-                Action  {
                     text: i18n.tr("Upload...")
                     onTriggered: {
                         pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"),
@@ -155,6 +150,11 @@ Page {
                             fileToMoveOrCopy = ""
                         }
                     }
+                }
+
+                Action  {
+                    text: i18n.tr("Transfer monitor...")
+                    onTriggered: pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
                 }
 
                 Action  {
