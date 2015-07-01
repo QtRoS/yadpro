@@ -200,7 +200,7 @@ Item {
 
         onDownloadOperationProgress: {
             //console.log("onDownloadOperationProgress", current, total)
-            if (d.currentDownload.progress != 100.0 && total == 0)
+            if (d.currentDownload.progress == 100.0 && total == 0)
                 d.currentDownload.progress = 100.0
             else d.currentDownload.progress = 100.0 * current / total
         }
@@ -211,7 +211,7 @@ Item {
         }
         onUploadOperationProgress: {
             //console.log("onUploadOperationProgress", current, total)
-            if (d.currentUpload.progress != 100.0 && total == 0)
+            if (d.currentUpload.progress == 100.0 && total == 0)
                 d.currentUpload.progress = 100.0
             else d.currentUpload.progress = 100.0 * current / total
         }

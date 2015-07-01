@@ -57,7 +57,7 @@ Page {
 
                 var fileUrls = []
                 for (var i = 0; i < root.activeTransfer.items.length; i++)
-                    fileUrls.push(items[i].url.toString())
+                    fileUrls.push(root.activeTransfer.items[i].url.toString())
 
                 finishSelection(fileUrls)
             }

@@ -69,10 +69,16 @@ Page {
     }
 
     function uploadFiles(filesToUpload) {
-        for (var x in filesToUpload)
-            console.log(filesToUpload[x])
-        transferManager.addUpload(filesToUpload)
-        pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
+        addTransfer(filesToUpload, true)
+    }
+
+    function addTransfer(files, isUpload) {
+        if (isUpload)
+            transferManager.addUpload(files)
+        else transferManager.addDownload(files)
+
+        if (optKeep.showTransferManager)
+            pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
     }
 
     head.actions: [
@@ -270,8 +276,7 @@ Page {
             }
 
             function download() {
-                transferManager.addDownload([selectedItem.href])
-                pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
+                addTransfer([selectedItem.href])
             }
 
             function copy() {
@@ -354,8 +359,7 @@ Page {
                     bridge.slotMoveToFolder(model.displayName)
                 else if (isTransferInProgress) {
                     selectedItem = model
-                    transferManager.addDownload([selectedItem.href])
-                    pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
+                    addTransfer([selectedItem.href])
                 }
             }
         }
@@ -396,8 +400,7 @@ Page {
                     bridge.slotMoveToFolder(model.displayName)
                 else if (isTransferInProgress) {
                     selectedItem = model
-                    transferManager.addDownload([selectedItem.href])
-                    pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
+                    addTransfer([selectedItem.href])
                 }
             }
 
@@ -433,6 +436,7 @@ Page {
         opacity: 0.25
         fontSize: "x-large"
         visible: bridge.folderModel.count == 0
+        textFormat: Text.PlainText
     } // Label
 
     ActivityIndicator{

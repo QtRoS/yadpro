@@ -5,7 +5,7 @@ QtObject {
 
     property bool showFileTime
     property bool useGridView
-    property bool downloadInBrowser
+    property bool showTransferManager
     property bool downloadPreviews
     property string sortOrder
     property string token
@@ -13,7 +13,7 @@ QtObject {
     Component.onCompleted: {
         showFileTime = getShowFileTime()
         useGridView = getUseGridView()
-        downloadInBrowser = getDownloadInBrowser()
+        showTransferManager = getShowTransferManager()
         sortOrder = getSortOrder()
         token = getToken()
         downloadPreviews = getDownloadPreviews()
@@ -27,8 +27,8 @@ QtObject {
         setUseGridView(useGridView)
     }
 
-    onDownloadInBrowserChanged: {
-        setDownloadInBrowser(downloadInBrowser)
+    onShowTransferManagerChanged: {
+        setShowTransferManager(showTransferManager)
     }
 
     onSortOrderChanged: {
@@ -67,15 +67,15 @@ QtObject {
         settingsDocument.contents = cont
     }
 
-    function getDownloadInBrowser() {
-        return settingsDocument.contents.downloadInBrowser
+    function getShowTransferManager() {
+        return settingsDocument.contents.showTransferManager
     }
 
-    function setDownloadInBrowser(value) {
+    function setShowTransferManager(value) {
         if (!value)
             value = ""
         var cont = settingsDocument.contents
-        cont.downloadInBrowser = value
+        cont.showTransferManager = value
         settingsDocument.contents = cont
     }
 
@@ -120,7 +120,7 @@ QtObject {
         docId: 'settingsDocument'
         create: true
         defaults: { "showFileTime" : true, "useGridView" : true, "token" : "",
-                    "downloadInBrowser" : false, "sortOrder" : "name", "downloadPreviews" : true }
+                    "showTransferManager" : true, "sortOrder" : "name", "downloadPreviews" : true }
     }
 }
 

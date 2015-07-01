@@ -146,4 +146,19 @@ Page {
         id: fileSelectorResultComponent
         ContentItem { }
     }
+
+    Label {
+        id: emptyListLabel
+
+        z: 5
+        anchors {
+            centerIn: parent
+            verticalCenterOffset: -units.gu(5)
+        }
+        text: i18n.tr("Empty list")
+        opacity: 0.25
+        fontSize: "x-large"
+        visible: transferManager.transferModel.count == 0
+        textFormat: Text.PlainText
+    } // Label
 }
