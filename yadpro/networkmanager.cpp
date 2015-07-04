@@ -3,7 +3,9 @@
 NetworkManager::NetworkManager(QObject *parent)
     : QObject(parent),
       m_downloadReply(NULL),
-      m_uploadReply(NULL)
+      m_uploadReply(NULL),
+      m_downloadError(QNetworkReply::NoError),
+      m_uploadError(QNetworkReply::NoError)
 { }
 
 NetworkManager::~NetworkManager()
@@ -11,6 +13,12 @@ NetworkManager::~NetworkManager()
 
 bool NetworkManager::download(const QString &url, const QString& localFile)
 {
+    if (m_downloadReply != NULL)
+    {
+        qDebug() << "DOWNLAOD ALREADY IN PROGRESS";
+        return false;
+    }
+
     if (m_downloadFile.isOpen())
         m_downloadFile.close();
 
@@ -30,6 +38,12 @@ bool NetworkManager::download(const QString &url, const QString& localFile)
 
 bool NetworkManager::upload(const QString &url, const QString& localFile)
 {
+    if (m_uploadReply != NULL)
+    {
+        qDebug() << "UPLOAD ALREADY IN PROGRESS";
+        return false;
+    }
+
     if (m_uploadFile.isOpen())
         m_uploadFile.close();
 
@@ -37,7 +51,6 @@ bool NetworkManager::upload(const QString &url, const QString& localFile)
     if (norm.startsWith("file://"))
         norm = norm.remove(0, 7);
     qDebug() << "UPLOAD FILE NAME: " << norm;
-
 
     m_uploadFile.setFileName(norm);
     if (!m_uploadFile.open(QIODevice::ReadOnly))
@@ -77,7 +90,7 @@ void NetworkManager::slotDownloadProgress(qint64 get, qint64 total)
 
 void NetworkManager::slotUploadProgress(qint64 sent, qint64 total)
 {
-    qDebug() << "UPLOAD PROGRESS" << sent << total;
+    qDebug() << "UPLOAD PROGRESS" << sent << total << "sender" << sender();
     emit uploadOperationProgress(sent, total);
 }
 
@@ -96,15 +109,13 @@ void NetworkManager::slotDownloadDataAvailable()
 void NetworkManager::slotDownloadError(QNetworkReply::NetworkError code)
 {
     qDebug() << "slotDownloadError" << code;
-    emit downloadOperationFinished("failure");
-    cleanup(OpDownload);
+    m_downloadError = code;
 }
 
 void NetworkManager::slotUploadError(QNetworkReply::NetworkError code)
 {
     qDebug() << "slotUploadError" << code;
-    emit uploadOperationFinished("failure");
-    cleanup(OpUpload);
+    m_uploadError = code;
 }
 
 void NetworkManager::slotDownloadFinished()
@@ -123,8 +134,14 @@ void NetworkManager::slotDownloadFinished()
     }
     else
     {
-        emit downloadOperationFinished("success");
+        QNetworkReply::NetworkError error = m_downloadError;
         cleanup(OpDownload);
+
+        // In case of aborting do not call finished signal.
+        if (error == QNetworkReply::OperationCanceledError)
+            return;
+
+        emit downloadOperationFinished(error == QNetworkReply::NoError ? "success" : "failed");
     }
 }
 
@@ -133,8 +150,14 @@ void NetworkManager::slotUploadFinished()
     qDebug() << "slotUploadFinished";
     // qDebug() << m_reply->rawHeaderPairs();
 
-    emit uploadOperationFinished("success");
+    QNetworkReply::NetworkError error = m_uploadError;
     cleanup(OpUpload);
+
+    // In case of aborting do not call finished signal.
+    if (error == QNetworkReply::OperationCanceledError)
+        return;
+
+    emit uploadOperationFinished(error == QNetworkReply::NoError ? "success" : "failed");
 }
 
 void NetworkManager::cleanup(Operation operation, bool soft)
@@ -156,6 +179,7 @@ void NetworkManager::cleanup(Operation operation, bool soft)
         if (m_uploadReply)
             m_uploadReply->deleteLater();
         m_uploadReply = NULL;
+        m_uploadError = QNetworkReply::NoError;
     }
     else
     {
@@ -177,6 +201,7 @@ void NetworkManager::cleanup(Operation operation, bool soft)
         if (m_downloadReply)
             m_downloadReply->deleteLater();
         m_downloadReply = NULL;
+        m_downloadError = QNetworkReply::NoError;
     }
 }
 

@@ -108,10 +108,10 @@ Page {
                     margins: units.gu(1)
                 }
                 height: units.gu(2)
-                value: model.progress
+                value: model.current
                 minimumValue: 0
-                maximumValue: 100
-                indeterminate: !value && model.state !== JS.STATE_ERROR
+                maximumValue: model.total
+                indeterminate: !model.current && model.total === -1 && model.state !== JS.STATE_ERROR
             }
 
             Label {

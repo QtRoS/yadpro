@@ -63,6 +63,9 @@ private:
 
     QNetworkReply* m_downloadReply;
     QNetworkReply* m_uploadReply;
+
+    QNetworkReply::NetworkError m_downloadError;
+    QNetworkReply::NetworkError m_uploadError;
 };
 
 #endif // NETWORKMANAGER_H

@@ -11,7 +11,7 @@ Item {
         for (var i = 0; i < urls.length; i++) {
             var obj = { "type" : JS.TRANSFER_UPLOAD, "url" : urls[i],
                 "state" : JS.STATE_INITIAL, "operationUrl" : "",
-                "name" : JS.getFileName(urls[i]), "progress" : 0 }
+                "name" : JS.getFileName(urls[i]), "current" : 0, "total" : 0 }
             transferModel.insert(0, obj)
         }
 
@@ -22,7 +22,7 @@ Item {
         for (var i = 0; i < urls.length; i++) {
             var obj = { "type" : JS.TRANSFER_DOWNLOAD, "url" : urls[i],
                 "state" : JS.STATE_INITIAL, "operationUrl" : "", "localUrl" : "",
-                "name" : JS.getFileName(urls[i]), "progress" : 0 }
+                "name" : JS.getFileName(urls[i]), "current" : 0, "total" : 0 }
             transferModel.insert(0, obj)
         }
 
@@ -35,6 +35,7 @@ Item {
 
         var itm = transferModel.get(i)
         itm.state = JS.STATE_INITIAL
+        console.log("---- retry", JSON.stringify(itm))
         if (itm.type == JS.TRANSFER_DOWNLOAD)
             d.doDownloadStep()
         else d.doUploadStep()
@@ -86,6 +87,9 @@ Item {
                 var shortName = JS.getFileName(currentUpload.url)
                 var path = JS.combinePath(bridge.currentFolder, shortName)
                 bridge.slotUpload(path/*, currentUpload.url*/)
+                changeUploadState(JS.STATE_URLREQUESTED)
+                break;
+            case JS.STATE_URLREQUESTED:
                 break;
             case JS.STATE_URLRECEIVED:
                 var isSucces = networkManager.upload(currentUpload.operationUrl, currentUpload.url)
@@ -103,7 +107,7 @@ Item {
             case JS.STATE_ERROR:
                 break;
             }
-            //console.log(" -=-=-= UPLOAD STATE", currentUpload.state)
+            console.log(" -=-=-= UPLOAD STATE", currentUpload.state)
         }
 
         function doDownloadStep() {
@@ -121,6 +125,9 @@ Item {
             {
             case JS.STATE_INITIAL:
                 bridge.slotDownload(/*path,*/ currentDownload.url)
+                changeDownloadState(JS.STATE_URLREQUESTED)
+                break;
+            case JS.STATE_URLREQUESTED:
                 break;
             case JS.STATE_URLRECEIVED:
                 var shortName = JS.getFileName(currentDownload.url)
@@ -199,10 +206,8 @@ Item {
         target: networkManager
 
         onDownloadOperationProgress: {
-            //console.log("onDownloadOperationProgress", current, total)
-            if (d.currentDownload.progress == 100.0 && total == 0)
-                d.currentDownload.progress = 100.0
-            else d.currentDownload.progress = 100.0 * current / total
+            d.currentDownload.current = current
+            d.currentDownload.total = total
         }
         onDownloadOperationFinished: {
             if (status === "success")
@@ -210,10 +215,11 @@ Item {
             else d.changeDownloadState(JS.STATE_ERROR)
         }
         onUploadOperationProgress: {
-            //console.log("onUploadOperationProgress", current, total)
-            if (d.currentUpload.progress == 100.0 && total == 0)
-                d.currentUpload.progress = 100.0
-            else d.currentUpload.progress = 100.0 * current / total
+            // Skip (0, 0) signal at the end.
+            if (!current && !total)
+                return
+            d.currentUpload.current = current
+            d.currentUpload.total = total
         }
         onUploadOperationFinished: {
             if (status === "success")

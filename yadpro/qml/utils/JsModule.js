@@ -23,6 +23,7 @@ var TRASH_ROOT_PATH = "trash:/"
 var PATH_DELIMITER = "/"
 
 var STATE_INITIAL = "initial"
+var STATE_URLREQUESTED = "urlrequested"
 var STATE_URLRECEIVED = "urlreceived"
 var STATE_INPROGRESS = "inprogress"
 var STATE_FINISHED = "finished"
