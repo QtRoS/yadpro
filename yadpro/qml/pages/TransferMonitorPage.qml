@@ -111,7 +111,7 @@ Page {
                 value: model.current
                 minimumValue: 0
                 maximumValue: model.total
-                indeterminate: !model.current && model.total === -1 && model.state !== JS.STATE_ERROR
+                indeterminate: (!model.current || model.total === -1) && model.state !== JS.STATE_ERROR
             }
 
             Label {
