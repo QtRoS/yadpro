@@ -49,7 +49,9 @@ OTHER_FILES +=  yadpro.apparmor \
     qml/pages/TrashView.qml \
     qml/TransferManager.qml \
     qml/pages/TransferMonitorPage.qml \
-    qml/ContentHubListener.qml
+    qml/ContentHubListener.qml \
+    qml/components/RadialAction.qml \
+    qml/components/RadialBottomEdge.qml
 
 
 #specify where the config files are installed to

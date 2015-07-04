@@ -32,6 +32,8 @@
         <file>qml/pages/TrashView.qml</file>
         <file>qml/pages/TransferMonitorPage.qml</file>
         <file>qml/ContentHubListener.qml</file>
+        <file>qml/components/RadialAction.qml</file>
+        <file>qml/components/RadialBottomEdge.qml</file>
     </qresource>
     <qresource prefix="/img">
         <file>qml/images/audio.png</file>

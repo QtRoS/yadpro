@@ -81,6 +81,26 @@ Page {
             pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
     }
 
+    function paste() {
+        if (fileToMoveOrCopy == "") {
+            showInfoBanner(i18n.tr("Please use Copy or Move context menu items to select file"),
+                           i18n.tr("Nothing to paste"),
+                           "/img/qml/images/fail.png")
+            return
+        }
+
+        var path = folderView.fileToMoveOrCopy
+        var shortFn = JS.getFileName(folderView.fileToMoveOrCopy)
+
+        var newName = JS.combinePath(bridge.currentFolder, shortFn)
+        if (folderView.isCurOperIsCopy)
+            bridge.slotCopyFile(path, newName)
+        else {
+            bridge.slotRenameFile(path, newName)
+            fileToMoveOrCopy = ""
+        }
+    }
+
     head.actions: [
         Action {
             property bool modeIsRefresh: !bridge.isBusy
@@ -115,42 +135,42 @@ Page {
             actions: ActionList {
                 id: popoverActionsList
 
-                Action  {
-                    text: i18n.tr("Upload...")
-                    onTriggered: {
-                        pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"),
-                                       { "selectionCallback" : uploadFiles } )
-                    }
-                }
+//                Action  {
+//                    text: i18n.tr("Upload...")
+//                    onTriggered: {
+//                        pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"),
+//                                       { "selectionCallback" : uploadFiles } )
+//                    }
+//                }
 
-                Action  {
-                    text: i18n.tr("Create new folder...")
-                    onTriggered: PopupUtils.open(Qt.resolvedUrl("../popups/CreateFolderDialog.qml"))
-                }
+//                Action  {
+//                    text: i18n.tr("Create new folder...")
+//                    onTriggered: PopupUtils.open(Qt.resolvedUrl("../popups/CreateFolderDialog.qml"))
+//                }
 
-                Action  {
-                    text: i18n.tr("Paste")
-                    onTriggered: {
+//                Action  {
+//                    text: i18n.tr("Paste")
+//                    onTriggered: {
 
-                        if (fileToMoveOrCopy == "") {
-                            showInfoBanner(i18n.tr("Please use Copy or Move context menu items to select file"),
-                                           i18n.tr("Nothing to paste"),
-                                           "/img/qml/images/fail.png")
-                            return
-                        }
+//                        if (fileToMoveOrCopy == "") {
+//                            showInfoBanner(i18n.tr("Please use Copy or Move context menu items to select file"),
+//                                           i18n.tr("Nothing to paste"),
+//                                           "/img/qml/images/fail.png")
+//                            return
+//                        }
 
-                        var path = folderView.fileToMoveOrCopy
-                        var shortFn = JS.getFileName(folderView.fileToMoveOrCopy)
+//                        var path = folderView.fileToMoveOrCopy
+//                        var shortFn = JS.getFileName(folderView.fileToMoveOrCopy)
 
-                        var newName = JS.combinePath(bridge.currentFolder, shortFn)
-                        if (folderView.isCurOperIsCopy)
-                            bridge.slotCopyFile(path, newName)
-                        else {
-                            bridge.slotRenameFile(path, newName)
-                            fileToMoveOrCopy = ""
-                        }
-                    }
-                }
+//                        var newName = JS.combinePath(bridge.currentFolder, shortFn)
+//                        if (folderView.isCurOperIsCopy)
+//                            bridge.slotCopyFile(path, newName)
+//                        else {
+//                            bridge.slotRenameFile(path, newName)
+//                            fileToMoveOrCopy = ""
+//                        }
+//                    }
+//                }
 
                 Action  {
                     text: i18n.tr("Transfer monitor...")
@@ -454,6 +474,33 @@ Page {
     //            right: parent.right
     //        }
     //    }
+
+    MyComponents.RadialBottomEdge {
+        expandAngle: 150
+            actions: [
+                MyComponents.RadialAction {
+                    iconName: "tab-new"
+                    iconColor: "white"
+                    backgroundColor: UbuntuColors.green
+                    onTriggered: PopupUtils.open(Qt.resolvedUrl("../popups/CreateFolderDialog.qml"))
+                },
+
+                MyComponents.RadialAction {
+                    iconName: "add"
+                    iconColor: "white"
+                    backgroundColor: UbuntuColors.green
+                    onTriggered: pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"),
+                                                { "selectionCallback" : uploadFiles } )
+                },
+
+                MyComponents.RadialAction {
+                    iconName: "edit-paste"
+                    iconColor: "white"
+                    backgroundColor: UbuntuColors.green
+                    onTriggered: paste()
+                }
+            ]
+        }
 
     MyComponents.PreviewNotificationBar { }
 
