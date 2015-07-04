@@ -129,6 +129,8 @@ Page {
                     {
                     case JS.STATE_INITIAL:
                         return i18n.tr("Waiting")
+                    case JS.STATE_URLREQUESTED:
+                        return i18n.tr("Url requested")
                     case JS.STATE_URLRECEIVED:
                         return i18n.tr("Url received")
                     case JS.STATE_INPROGRESS:
