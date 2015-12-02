@@ -20,7 +20,10 @@ void CppUtils::copyToClipboard(const QString& text) const
 
 QString CppUtils::prependWithDownloadsPath(const QString &fileName) const
 {
-    QString dirName = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/YaD"; // TODO DownloadLocation
+    static QString dirName;
+    if (dirName.isEmpty())
+        dirName = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + QStringLiteral("/YaD"); // TODO DownloadLocation
+
     // qDebug() << "DOWNLOAD DIR" << dirName;
     if (!QDir(dirName).exists() && !QDir().mkdir(dirName))
     {
@@ -31,7 +34,7 @@ QString CppUtils::prependWithDownloadsPath(const QString &fileName) const
     return QDir::cleanPath(dirName + QDir::separator() + fileName);
 }
 
-bool CppUtils::openUrlExternally(const QString &url)
+bool CppUtils::openUrlExternally(const QString &url) const
 {
     return QDesktopServices::openUrl(QUrl(url));
 }
@@ -41,7 +44,6 @@ QObject *CppUtils::cppUtilsSingletoneProvider(QQmlEngine *engine, QJSEngine *scr
     Q_UNUSED(engine)
     Q_UNUSED(scriptEngine)
 
-    CppUtils *cu = new CppUtils();
-    return cu;
+    return new CppUtils();
 }
 
