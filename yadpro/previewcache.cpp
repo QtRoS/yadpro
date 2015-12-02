@@ -1,11 +1,14 @@
-#include "previewcache.h"
 #include <QStandardPaths>
+#include "previewcache.h"
+
+Q_LOGGING_CATEGORY(PrevCache, "PreviewCache")
+
 PreviewCache::PreviewCache(QObject *parent) :
     QObject(parent),
     m_isBusy(false)
 {
     m_cacheLoc = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/";
-    qDebug() << "CACHE LOC" << m_cacheLoc;
+    qCDebug(PrevCache) << "Cache location:" << m_cacheLoc;
 }
 
 PreviewCache::~PreviewCache()
@@ -53,7 +56,7 @@ void PreviewCache::slotDownloadDataAvailable()
 {
     qint64 dataLen = m_reply->bytesAvailable();
     qint64 written = m_file.write(m_reply->read(dataLen));
-    qDebug() << "AVAILABLE" << dataLen << "WRITTEN" << written;
+    qCDebug(PrevCache) << "Downloading" << QFileInfo(m_file).fileName() << "available" << dataLen << "written" << written;
 }
 
 void PreviewCache::makeRequest(const QString &url)
@@ -88,20 +91,18 @@ void PreviewCache::downloadNext()
 
     m_file.setFileName(item.localPath);
     if (!m_file.open(QIODevice::Truncate | QIODevice::WriteOnly))
-        qDebug () << "FILE OPEN ERROR:" << item.localPath;
+        qCWarning(PrevCache) << "File '" + item.localPath + "' can't be opened:" << m_file.errorString() << m_file.error();
 
     makeRequest(item.url);
 }
 
 void PreviewCache::slotError(QNetworkReply::NetworkError code)
 {
-    qDebug() << "slotError" << code << m_reply->errorString();
+    qCWarning(PrevCache) << "Download error:" << code << m_reply->errorString();
 }
 
 void PreviewCache::slotFinished()
 {
-    qDebug() << "slotFinished";
-
     int status = m_reply->attribute( QNetworkRequest::HttpStatusCodeAttribute ).toInt();
     QString location = m_reply->rawHeader("Location");
 
@@ -110,7 +111,7 @@ void PreviewCache::slotFinished()
     // Check if redirect.
     if (status / 100 == 3 || !location.isEmpty())
     {
-        qDebug() << "REDIRECT: " << location;
+        qCDebug(PrevCache) << "Redirected: " << location;
         makeRequest(location);
     }
     else

@@ -7,6 +7,9 @@
 #include <QDir>
 #include <QDesktopServices>
 #include <QStandardPaths>
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(CppSingletone)
 
 class CppUtils : public QObject
 {
@@ -17,7 +20,7 @@ public:
 
     Q_INVOKABLE void copyToClipboard(const QString& text) const;
     Q_INVOKABLE QString prependWithDownloadsPath(const QString& fileName) const;
-    Q_INVOKABLE bool openUrlExternally(const QString& url);
+    Q_INVOKABLE bool openUrlExternally(const QString& url) const;
 
     static QObject *cppUtilsSingletoneProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
 

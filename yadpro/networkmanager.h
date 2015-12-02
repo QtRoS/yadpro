@@ -1,24 +1,22 @@
 #ifndef NETWORKMANAGER_H
 #define NETWORKMANAGER_H
 
-#include <QObject>
-#include <QDebug>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QFile>
 #include <QDir>
 #include <QRegExp>
+#include <QLoggingCategory>
 
-enum Operation
-{
-    OpDownload = 0,
-    OpUpload = 1
-};
+Q_DECLARE_LOGGING_CATEGORY(NetMan)
+
+
 
 class NetworkManager : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(Operation)
 public:
     explicit NetworkManager(QObject *parent = 0);
     ~NetworkManager();
@@ -33,6 +31,8 @@ public:
 
     const QString& token() const;
     void setToken(const QString& t);
+
+    enum Operation { OpDownload = 0, OpUpload = 1 };
 
 signals:
     void downloadOperationProgress(qint64 current, qint64 total);
@@ -53,6 +53,7 @@ private slots:
 private:
     void cleanup(Operation operation, bool soft = false);
     void makeRequest(const QString& url, Operation operation);
+    QString operationToString(Operation operation) const;
 
 private:
     QString m_token;

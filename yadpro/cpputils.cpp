@@ -3,18 +3,17 @@
 #include <QClipboard>
 #include <QGuiApplication>
 
-CppUtils::CppUtils(QObject *parent) : QObject(parent)
-{
+Q_LOGGING_CATEGORY(CppSingletone, "CppUtils")
 
-}
+CppUtils::CppUtils(QObject *parent) : QObject(parent)
+{ }
 
 CppUtils::~CppUtils()
-{
-
-}
+{ }
 
 void CppUtils::copyToClipboard(const QString& text) const
 {
+    qCDebug(CppSingletone) << text;
     QGuiApplication::clipboard()->setText(text);
 }
 
@@ -22,12 +21,14 @@ QString CppUtils::prependWithDownloadsPath(const QString &fileName) const
 {
     static QString dirName;
     if (dirName.isEmpty())
+    {
         dirName = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + QStringLiteral("/YaD"); // TODO DownloadLocation
+        qCDebug(CppSingletone) << "Directory for downloads:" << dirName;
+    }
 
-    // qDebug() << "DOWNLOAD DIR" << dirName;
     if (!QDir(dirName).exists() && !QDir().mkdir(dirName))
     {
-        qDebug() << "CAN'T DOWNLOADS CREATE DIRECTORY" << dirName;
+        qCCritical(CppSingletone) << "Can't create directory for downloads:" << dirName;
         return fileName;
     }
 

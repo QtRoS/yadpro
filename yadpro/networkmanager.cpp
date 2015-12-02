@@ -1,5 +1,7 @@
 #include "networkmanager.h"
 
+Q_LOGGING_CATEGORY(NetMan, "NetworkManager")
+
 NetworkManager::NetworkManager(QObject *parent)
     : QObject(parent),
       m_downloadReply(NULL),
@@ -15,19 +17,19 @@ bool NetworkManager::download(const QString &url, const QString& localFile)
 {
     if (m_downloadReply != NULL)
     {
-        qDebug() << "DOWNLAOD ALREADY IN PROGRESS";
+        qCWarning(NetMan) << "Download already in progress";
         return false;
     }
 
     if (m_downloadFile.isOpen())
         m_downloadFile.close();
 
-    qDebug() << "DOWNLOAD FILE NAME: " << localFile;
+    qCDebug(NetMan) << "Download file name:" << localFile;
 
     m_downloadFile.setFileName(localFile);
     if (!m_downloadFile.open(QIODevice::Truncate | QIODevice::WriteOnly))
     {
-        qDebug () << "FILE FOR WRITING OPEN ERROR:" << localFile;
+        qCWarning(NetMan) << "File '" + localFile + "' can't be opened:" << m_downloadFile.errorString() << m_downloadFile.error();
         return false;
     }
 
@@ -40,7 +42,7 @@ bool NetworkManager::upload(const QString &url, const QString& localFile)
 {
     if (m_uploadReply != NULL)
     {
-        qDebug() << "UPLOAD ALREADY IN PROGRESS";
+        qCWarning(NetMan) << "Upload already in progress";
         return false;
     }
 
@@ -50,12 +52,12 @@ bool NetworkManager::upload(const QString &url, const QString& localFile)
     QString norm = localFile;
     if (norm.startsWith("file://"))
         norm = norm.remove(0, 7);
-    qDebug() << "UPLOAD FILE NAME: " << norm;
+    qCDebug(NetMan) << "Upload file name:" << norm;
 
     m_uploadFile.setFileName(norm);
     if (!m_uploadFile.open(QIODevice::ReadOnly))
     {
-        qDebug () << "FILE FOR READING OPEN ERROR:" << norm;
+        qCWarning(NetMan) << "File '" + norm + "' can't be opened:" << m_uploadFile.errorString() << m_uploadFile.error();
         return false;
     }
 
@@ -72,25 +74,27 @@ void NetworkManager::abort()
 
 void NetworkManager::abortDownload()
 {
+    qCDebug(NetMan) << "Download aborted";
     if (m_downloadReply)
         m_downloadReply->abort();
 }
 
 void NetworkManager::abortUpload()
 {
+    qCDebug(NetMan) << "Upload aborted";
     if (m_uploadReply)
         m_uploadReply->abort();
 }
 
 void NetworkManager::slotDownloadProgress(qint64 get, qint64 total)
 {
-    qDebug() << "DOWNLOAD PROGRESS" << get << total;
+    qCDebug(NetMan) << "Download progress:" << get << "of" << total;
     emit downloadOperationProgress(get, total);
 }
 
 void NetworkManager::slotUploadProgress(qint64 sent, qint64 total)
 {
-    qDebug() << "UPLOAD PROGRESS" << sent << total << "sender" << sender();
+    qCDebug(NetMan) << "Upload progress:" << sent << "of" << total;
     emit uploadOperationProgress(sent, total);
 }
 
@@ -98,7 +102,7 @@ void NetworkManager::slotDownloadDataAvailable()
 {
     if (!m_downloadReply)
     {
-        qDebug() << "OMG REPLY IS NULL";
+        qCCritical(NetMan) << "Reply is null at 'slotDownloadDataAvailable()'";
         return;
     }
 
@@ -108,27 +112,26 @@ void NetworkManager::slotDownloadDataAvailable()
 
 void NetworkManager::slotDownloadError(QNetworkReply::NetworkError code)
 {
-    qDebug() << "slotDownloadError" << code;
+    qCWarning(NetMan) << "Download error:" << code;
     m_downloadError = code;
 }
 
 void NetworkManager::slotUploadError(QNetworkReply::NetworkError code)
 {
-    qDebug() << "slotUploadError" << code;
+    qCWarning(NetMan) << "Upload error:" << code;
     m_uploadError = code;
 }
 
 void NetworkManager::slotDownloadFinished()
 {
-    qDebug() << "slotDownlaodFinished";
-    // qDebug() << m_reply->rawHeaderPairs();
+    qCDebug(NetMan) << "'slotDownloadFinished()' is called";
 
     int status = m_downloadReply->attribute( QNetworkRequest::HttpStatusCodeAttribute ).toInt();
     QString location = m_downloadReply->rawHeader("Location");
     // REDIRECT.
     if (status / 100 == 3 || !location.isEmpty())
     {
-        qDebug() << "REDIRECT: " << location;
+        qCDebug(NetMan) << "Redirected: " << location;
         cleanup(OpDownload, true);
         makeRequest(location, OpDownload);
     }
@@ -147,7 +150,7 @@ void NetworkManager::slotDownloadFinished()
 
 void NetworkManager::slotUploadFinished()
 {
-    qDebug() << "slotUploadFinished";
+    qCDebug(NetMan) << "'slotUploadFinished()' is called";
     // qDebug() << m_reply->rawHeaderPairs();
 
     QNetworkReply::NetworkError error = m_uploadError;
@@ -162,6 +165,7 @@ void NetworkManager::slotUploadFinished()
 
 void NetworkManager::cleanup(Operation operation, bool soft)
 {
+    qCDebug(NetMan) << "CleanUp:" << operationToString(operation) << soft;
     if (operation == OpUpload)
     {
         if (!soft && m_uploadFile.isOpen())
@@ -211,6 +215,8 @@ void NetworkManager::makeRequest(const QString &url, Operation operation)
     QNetworkRequest req(reqUrl);
     // req.setRawHeader("Authorization", "OAuth " + m_token.toLatin1());
 
+    qCDebug(NetMan) << "Making request:" << operationToString(operation) << url;
+
     if (operation == OpUpload)
     {
         req.setRawHeader("Content-Type", "application/binary");
@@ -241,6 +247,19 @@ void NetworkManager::makeRequest(const QString &url, Operation operation)
 
         connect(m_downloadReply, SIGNAL(error(QNetworkReply::NetworkError)),
                 this, SLOT(slotDownloadError(QNetworkReply::NetworkError)));
+    }
+}
+
+QString NetworkManager::operationToString(NetworkManager::Operation operation) const
+{
+    switch (operation)
+    {
+    case OpDownload:
+        return "OpDownload";
+    case OpUpload:
+        return "OpUpload";
+    default:
+        return "OpUnknown";
     }
 }
 

@@ -1,8 +1,6 @@
 #ifndef PREVIEWCACHE_H
 #define PREVIEWCACHE_H
 
-#include <QObject>
-#include <QDebug>
 #include <QQueue>
 #include <QCryptographicHash>
 #include <QNetworkAccessManager>
@@ -12,6 +10,9 @@
 #include <QHash>
 #include <QFileInfo>
 #include <QDir>
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(PrevCache)
 
 struct QueueItem
 {
