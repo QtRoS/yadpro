@@ -17,15 +17,15 @@
 */
 
 import QtQuick 2.4
-import Ubuntu.Components 1.2
-import Ubuntu.Components.Popups 1.0
+import Ubuntu.Components 1.3
+import Ubuntu.Components.Popups 1.3
 
 import "../popups"
 
 Dialog {
     id: aboutDialog
     title: i18n.tr("<font color='#dd4814'>YaD Pro</font>")
-    text: i18n.tr("Unofficial <font color='#dd4814'>Ubuntu Phone</font> client of <br><a href='http://disk.yandex.com/'>Yandex.Disk</a> free file storage service<br> developed by Roman Shchekin <br> aka <font color='#dd4814'>QtRoS</font><br>mrqtros@gmail.com") + "<br>v2.2.1"
+    text: i18n.tr("Unofficial <font color='#dd4814'>Ubuntu Phone</font> client of <br><a href='http://disk.yandex.com/'>Yandex.Disk</a> free file storage service<br> developed by Roman Shchekin <br> aka <font color='#dd4814'>QtRoS</font><br>mrqtros@gmail.com") + "<br>v2.2.2"
 
     Item {
         height: units.gu(8)

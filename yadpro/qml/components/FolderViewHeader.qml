@@ -17,7 +17,7 @@
 */
 
 import QtQuick 2.4
-import Ubuntu.Components 1.2
+import Ubuntu.Components 1.3
 
 Item {
     id: headerItemRoot
@@ -29,7 +29,7 @@ Item {
     height: isActive ? units.gu(7) : 0
 
     UbuntuShape {
-        color: innerMa.pressed ? "red" : "green"
+        backgroundColor: innerMa.pressed ? "red" : "green"
 
         anchors {
             fill: parent

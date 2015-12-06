@@ -101,7 +101,7 @@ BaseBridge {
             __removeTask(resObj.task)
 
             if (code != "metadata")
-                console.log(JSON.stringify(resObj.response))
+                console.log("Bridge, onResponseReceived:", JSON.stringify(resObj.response))
 
             var jobResult = { "isError" : resObj.isError, "response" : resObj.response, "code" : code }
 

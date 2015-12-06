@@ -17,17 +17,12 @@
 */
 
 import QtQuick 2.4
-import Ubuntu.Components 1.2
-import Ubuntu.Components.Popups 1.0
-import Ubuntu.Components.ListItems 0.1 as ListItem
-import Ubuntu.PerformanceMetrics 0.1
+import Ubuntu.Components 1.3
+import Ubuntu.Components.Popups 1.3
+import Ubuntu.Components.ListItems 1.3 as ListItem
 
 import "./pages"
 import "./components"
-
-/*!
-    \brief MainView with a Label and Button elements.
-*/
 
 MainView {
     // objectName for functional testing purposes (autopilot-qt5)
@@ -39,6 +34,7 @@ MainView {
     width: units.gu(50)
     height: units.gu(75)
 
+    theme.name: "Ubuntu.Components.Themes.SuruDark"
     backgroundColor: "#464646"
 
     PageStack {

@@ -1,6 +1,5 @@
 import QtQuick 2.4
-import QtFeedback 5.0
-import Ubuntu.Components 1.2
+import Ubuntu.Components 1.3
 
 Item {
     id: bottomEdge
