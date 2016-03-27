@@ -30,9 +30,12 @@ Page {
     id: trashView
 
     property var selectedItem: null
-
     visible: false
-    title: i18n.tr("Trash") // JS.isRootPath(trashBridge.currentFolder) ? i18n.tr("Trash") : JS.decorateTitle(trashBridge.currentFolder)
+
+    header: PageHeader {
+        id: pageHeader
+        title: i18n.tr("Trash")
+    }
 
     Component.onCompleted: {
         optKeep.useGridViewChanged.connect(viewChanged)

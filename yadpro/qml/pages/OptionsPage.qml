@@ -26,7 +26,11 @@ Page {
 
     property bool preventSave: false
 
-    title: i18n.tr("Options")
+    header: PageHeader {
+        id: pageHeader
+        title: i18n.tr("Options")
+    }
+
     visible: false
 
     function updateInfoFromOptions() {

@@ -45,9 +45,6 @@ Page {
         }
     }
 
-    visible: false
-    title: JS.isRootPath(bridge.currentFolder) ? i18n.tr("My Disk") : JS.decorateTitle(bridge.currentFolder)
-
     Component.onCompleted: {
         optKeep.useGridViewChanged.connect(viewChanged)
         viewChanged()
@@ -101,29 +98,36 @@ Page {
         }
     }
 
-    head.actions: [
-        Action {
-            property bool modeIsRefresh: !bridge.isBusy
-            iconName: modeIsRefresh ? "reload" : "close"
-            onTriggered: {
-                if (modeIsRefresh)
-                    bridge.slotUpdate()
-                else bridge.slotAbort()
+    visible: false
+
+    header: PageHeader {
+        id: pageHeader
+        title: JS.isRootPath(bridge.currentFolder) ? i18n.tr("My Disk") : JS.decorateTitle(bridge.currentFolder)
+
+        leadingActionBar.actions: [
+            Action {
+                enabled: !JS.isRootPath(bridge.currentFolder)
+                visible: enabled
+                iconName: "back"
+                onTriggered: bridge.slotOneLevelBack()
             }
-        },
-        Action {
-            iconName: "edit"
-            onTriggered: {
-                PopupUtils.open(mainMenuComponent, null)
+        ]
+
+        trailingActionBar.actions: [
+            Action {
+                property bool modeIsRefresh: !bridge.isBusy
+                iconName: modeIsRefresh ? "reload" : "close"
+                onTriggered: {
+                    if (modeIsRefresh)
+                        bridge.slotUpdate()
+                    else bridge.slotAbort()
+                }
+            },
+            Action {
+                iconName: "edit"
+                onTriggered: PopupUtils.open(mainMenuComponent, null)
             }
-        }
-    ]
-    head.backAction: Action {
-        visible: !JS.isRootPath(bridge.currentFolder)
-        iconName: "back"
-        onTriggered: {
-            bridge.slotOneLevelBack()
-        }
+        ]
     }
 
     Component {
@@ -134,43 +138,6 @@ Page {
 
             actions: ActionList {
                 id: popoverActionsList
-
-//                Action  {
-//                    text: i18n.tr("Upload...")
-//                    onTriggered: {
-//                        pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"),
-//                                       { "selectionCallback" : uploadFiles } )
-//                    }
-//                }
-
-//                Action  {
-//                    text: i18n.tr("Create new folder...")
-//                    onTriggered: PopupUtils.open(Qt.resolvedUrl("../popups/CreateFolderDialog.qml"))
-//                }
-
-//                Action  {
-//                    text: i18n.tr("Paste")
-//                    onTriggered: {
-
-//                        if (fileToMoveOrCopy == "") {
-//                            showInfoBanner(i18n.tr("Please use Copy or Move context menu items to select file"),
-//                                           i18n.tr("Nothing to paste"),
-//                                           "/img/qml/images/fail.png")
-//                            return
-//                        }
-
-//                        var path = folderView.fileToMoveOrCopy
-//                        var shortFn = JS.getFileName(folderView.fileToMoveOrCopy)
-
-//                        var newName = JS.combinePath(bridge.currentFolder, shortFn)
-//                        if (folderView.isCurOperIsCopy)
-//                            bridge.slotCopyFile(path, newName)
-//                        else {
-//                            bridge.slotRenameFile(path, newName)
-//                            fileToMoveOrCopy = ""
-//                        }
-//                    }
-//                }
 
                 Action  {
                     text: i18n.tr("Transfer monitor...")
@@ -351,7 +318,13 @@ Page {
     ListView {
         id: simpleList
 
-        anchors.fill: parent
+        anchors {
+            top: pageHeader.bottom
+            right: parent.right
+            left: parent.left
+            bottom: parent.bottom
+        }
+
         model: bridge.folderModel
 
         header: MyComponents.FolderViewHeader {
@@ -394,7 +367,7 @@ Page {
         }
 
         anchors {
-            top: parent.top
+            top: pageHeader.bottom
             bottom: parent.bottom
         }
 
@@ -464,16 +437,6 @@ Page {
         visible: bridge.isBusy
         anchors.centerIn: parent
     }
-
-    //    MyComponents.MiniProgressBar {
-    //        id: miniProgress
-
-    //        anchors {
-    //            bottom: parent.bottom
-    //            left: parent.left
-    //            right: parent.right
-    //        }
-    //    }
 
     MyComponents.RadialBottomEdge {
         expandAngle: 150

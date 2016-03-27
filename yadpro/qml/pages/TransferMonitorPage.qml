@@ -24,8 +24,12 @@ import "../utils/JsModule.js" as JS
 
 
 Page {
-    title: i18n.tr("Transfer monitor")
-    flickable: null
+
+    header: PageHeader {
+        id: pageHeader
+        title: i18n.tr("Transfer monitor")
+        flickable: simpleList
+    }
 
     ListView {
         id: simpleList

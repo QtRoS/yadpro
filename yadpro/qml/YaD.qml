@@ -34,8 +34,8 @@ MainView {
     width: units.gu(50)
     height: units.gu(75)
 
-    theme.name: "Ubuntu.Components.Themes.SuruDark"
-    backgroundColor: "#464646"
+    //theme.name: "Ubuntu.Components.Themes.SuruDark"
+    //backgroundColor: "#464646"
 
     PageStack {
         id: pageStack

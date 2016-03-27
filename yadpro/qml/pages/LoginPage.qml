@@ -29,7 +29,6 @@ Page {
 
     property bool testRequestInProgress: false
 
-    title: i18n.tr("Log in")
     flickable: null
 
     function logout() {
@@ -56,12 +55,16 @@ Page {
         tokenWebView.visible = true
     }
 
-    head.actions: [
-        Action {
-            iconName: "go-to"
-            onTriggered: if (!testRequestInProgress) login()
-        }
-    ]
+    header: PageHeader {
+        id: pageHeader
+        title: i18n.tr("Log in")
+        trailingActionBar.actions: [
+            Action {
+                iconName: "go-to"
+                onTriggered: if (!testRequestInProgress) login()
+            }
+        ]
+    }
 
     Component.onCompleted: login()
 
