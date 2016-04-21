@@ -117,19 +117,5 @@ QtObject {
         property string sortOrder: "name"
         property string token: ""
     }
-
-//    property var db: U1db.Database {
-//            id: settingsDataBase
-//            path: "ShortsSettings"
-//        }
-
-//    property var document: U1db.Document {
-//        id: settingsDocument
-//        database: settingsDataBase
-//        docId: 'settingsDocument'
-//        create: true
-//        defaults: { "showFileTime" : true, "useGridView" : true, "token" : "",
-//                    "showTransferManager" : true, "sortOrder" : "name", "downloadPreviews" : true }
-//    }
 }
 

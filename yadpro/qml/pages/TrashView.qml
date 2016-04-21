@@ -26,7 +26,7 @@ import "../components" as MyComponents
 import "../popups"
 import ".."
 
-Page {
+AdaptivePage {
     id: trashView
 
     property var selectedItem: null
@@ -50,7 +50,7 @@ Page {
         simpleList.model = (!v)? trashBridge.folderModel : undefined
         gridView.visible = v
         gridView.model = (v)? trashBridge.folderModel : undefined
-        flickable = v ?  null : simpleList
+        pageHeader.flickable = v ?  null : simpleList
         scrollbar.flickable = v ? gridView : simpleList
     }
 
@@ -61,12 +61,11 @@ Page {
 
     head.actions: [
         Action {
-            property bool modeIsRefresh: !trashBridge.isBusy
-            iconName: modeIsRefresh ? "reload" : "close"
+            iconName: trashBridge.isBusy ? "close" : "reload"
             onTriggered: {
-                if (modeIsRefresh)
-                    trashBridge.slotUpdate()
-                else trashBridge.slotAbort()
+                if (trashBridge.isBusy)
+                    trashBridge.slotAbort()
+                else trashBridge.slotUpdate()
             }
         },
         Action {
@@ -76,13 +75,6 @@ Page {
             }
         }
     ]
-//    head.backAction: Action {
-//        visible: !JS.isRootPath(trashBridge.currentFolder)
-//        iconName: "back"
-//        onTriggered: {
-//            trashBridge.slotOneLevelBack()
-//        }
-//    }
 
     Component {
         id: mainMenuComponent
@@ -116,7 +108,7 @@ Page {
                     text: i18n.tr("Options...")
                     onTriggered: {
                         optionsPage.updateInfoFromOptions()
-                        pageStack.push(optionsPage)
+                        pageStack.push(Qt.resolvedUrl("./OptionsPage.qml"), { }, trashView)
                     }
                 }
             } // ActionList

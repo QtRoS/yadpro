@@ -25,30 +25,43 @@ import "./pages"
 import "./components"
 
 MainView {
-    // objectName for functional testing purposes (autopilot-qt5)
     objectName: "mainView"
-    
-    // Note! applicationName needs to match the .desktop filename
     applicationName: "yadpro"
     
     width: units.gu(50)
     height: units.gu(75)
 
-    //theme.name: "Ubuntu.Components.Themes.SuruDark"
-    //backgroundColor: "#464646"
+    theme.name: "Ubuntu.Components.Themes.SuruDark"
 
-    PageStack {
+    AdaptivePageLayout {
         id: pageStack
 
-        Component.onCompleted: {
-            push(loginPage)
+        function push(page, properties, predecessor) {
+            //console.log("push", page, JSON.stringify(properties), predecessor)
+
+            // In case if page is passed as QML file.
+            if (typeof page === "string")
+                page = Qt.createComponent(page).createObject(pageStack, properties)
+
+            page.predecessor = predecessor ? predecessor : folderView
+            pageStack.addPageToCurrentColumn(page.predecessor, page, properties)
+            currentPageChangeHandler(page)
         }
 
-        onCurrentPageChanged: {
-            if (currentPage != null) {
-                console.log("PageStack onCurrentPageChanged", currentPage.title)
-                if (currentPage.reloadPageContent)
-                    currentPage.reloadPageContent()
+        function pop(page) {
+            pageStack.removePages(page.predecessor)
+            currentPageChangeHandler(page.predecessor)
+        }
+
+        anchors.fill: parent
+        primaryPage: folderView
+        Component.onCompleted: push(loginPage)
+
+        function currentPageChangeHandler(page) {
+            if (page) {
+                console.log("PageStack onCurrentPageChanged", page.header.title)
+                if (page.reloadPageContent)
+                    page.reloadPageContent()
             }
         }
 
@@ -63,7 +76,6 @@ MainView {
                 networkManager.token = token
 
                 pageStack.pop(loginPage)
-                pageStack.push(folderView)
 
                 bridge.yadApi.accessToken = token
                 trashBridge.yadApi.accessToken = token
@@ -73,10 +85,6 @@ MainView {
 
         FolderView {
             id: folderView
-        }
-
-        OptionsPage {
-            id: optionsPage
         }
     }
 

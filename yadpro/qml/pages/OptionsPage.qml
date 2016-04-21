@@ -21,7 +21,7 @@ import Ubuntu.Components 1.3
 import Ubuntu.Components.Popups 1.3
 import Ubuntu.Components.ListItems 1.3 as ListItem
 
-Page {
+AdaptivePage {
     id: pageItself
 
     property bool preventSave: false
@@ -32,6 +32,8 @@ Page {
     }
 
     visible: false
+
+    Component.onCompleted: updateInfoFromOptions()
 
     function updateInfoFromOptions() {
         pageItself.preventSave = true
@@ -48,7 +50,12 @@ Page {
     Column {
         id: contentColumn
 
-        width: parent.width
+        anchors {
+            top: pageHeader.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
 
         ListItem.Standard {
             id: gridListItem

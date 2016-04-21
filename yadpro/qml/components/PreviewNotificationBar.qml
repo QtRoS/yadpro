@@ -34,6 +34,7 @@ Rectangle {
     Label {
         id: someLabel
         text: i18n.tr("Downloading previews...")
+        color: "white"
         anchors.centerIn: parent
         SequentialAnimation {
             loops: Animation.Infinite

@@ -27,13 +27,12 @@ import "../utils/JsModule.js" as JS
 import "../components" as MyComponents
 import "../popups"
 
-Page {
+AdaptivePage {
     id: folderView
 
     property bool isCurOperIsCopy: false
     property string fileToMoveOrCopy: ""
     property var selectedItem: null
-
 
     property bool isTransferInProgress: false
     Connections {
@@ -56,7 +55,7 @@ Page {
         simpleList.model = (!v)? bridge.folderModel : undefined
         gridView.visible = v
         gridView.model = (v)? bridge.folderModel : undefined
-        flickable = v ?  null : simpleList
+        pageHeader.flickable = v ?  null : simpleList
         scrollbar.flickable = v ? gridView : simpleList
     }
 
@@ -75,7 +74,7 @@ Page {
         else transferManager.addDownload(files)
 
         if (optKeep.showTransferManager)
-            pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
+            pageStack.push(Qt.resolvedUrl("./TransferMonitorPage.qml"), { })
     }
 
     function paste() {
@@ -115,19 +114,28 @@ Page {
 
         trailingActionBar.actions: [
             Action {
-                property bool modeIsRefresh: !bridge.isBusy
-                iconName: modeIsRefresh ? "reload" : "close"
-                onTriggered: {
-                    if (modeIsRefresh)
-                        bridge.slotUpdate()
-                    else bridge.slotAbort()
-                }
-            },
-            Action {
                 iconName: "edit"
                 onTriggered: PopupUtils.open(mainMenuComponent, null)
+            },
+            Action {
+                iconName: bridge.isBusy ? "close" : "reload"
+                onTriggered: {
+                    if (bridge.isBusy)
+                        bridge.slotAbort()
+                    else bridge.slotUpdate()
+                }
             }
         ]
+
+        ActivityIndicator{
+            running: bridge.isBusy
+            visible: bridge.isBusy
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: units.gu(10)
+            }
+        }
     }
 
     Component {
@@ -141,7 +149,9 @@ Page {
 
                 Action  {
                     text: i18n.tr("Transfer monitor...")
-                    onTriggered: pageStack.push(Qt.resolvedUrl("TransferMonitorPage.qml"))
+                    onTriggered: {
+                        pageStack.push(Qt.resolvedUrl("./TransferMonitorPage.qml"), { } )
+                    }
                 }
 
                 Action  {
@@ -179,8 +189,7 @@ Page {
                 Action {
                     text: i18n.tr("Options...")
                     onTriggered: {
-                        optionsPage.updateInfoFromOptions()
-                        pageStack.push(optionsPage)
+                        pageStack.push(Qt.resolvedUrl("./OptionsPage.qml"), { } )
                     }
                 }
 
@@ -318,12 +327,7 @@ Page {
     ListView {
         id: simpleList
 
-        anchors {
-            top: pageHeader.bottom
-            right: parent.right
-            left: parent.left
-            bottom: parent.bottom
-        }
+        anchors.fill: parent
 
         model: bridge.folderModel
 
@@ -432,12 +436,6 @@ Page {
         textFormat: Text.PlainText
     } // Label
 
-    ActivityIndicator{
-        running: bridge.isBusy
-        visible: bridge.isBusy
-        anchors.centerIn: parent
-    }
-
     MyComponents.RadialBottomEdge {
         expandAngle: 150
             actions: [
@@ -452,8 +450,9 @@ Page {
                     iconName: "add"
                     iconColor: "white"
                     backgroundColor: UbuntuColors.green
-                    onTriggered: pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"),
-                                                { "selectionCallback" : uploadFiles } )
+                    onTriggered: {
+                        pageStack.push(Qt.resolvedUrl("../content/SelectFromPage.qml"), { /* "selectionCallback" : uploadFiles */ })
+                    }
                 },
 
                 MyComponents.RadialAction {

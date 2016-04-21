@@ -2,9 +2,11 @@ import QtQuick 2.4
 import Ubuntu.Components 1.3
 import Ubuntu.Content 1.1
 
+import "../pages"
+
 import "../utils/JsModule.js" as JS
 
-Page {
+AdaptivePage {
     id: root
 
     property var activeTransfer
@@ -13,8 +15,10 @@ Page {
     property var selectionCallback
 
     function finishSelection(filesToUpload) {
+        // console.log("finishSelection", filesToUpload, selectionCallback)
         if (selectionCallback)
             selectionCallback(filesToUpload)
+        else predecessor.uploadFiles(filesToUpload)
     }
 
     ContentPeerPicker {
@@ -29,7 +33,7 @@ Page {
         }
 
         onCancelPressed: {
-            pageStack.pop()
+            pageStack.pop(root)
         }
     }
 
@@ -43,7 +47,7 @@ Page {
         onStateChanged: {
             console.log("StateChanged: " + root.activeTransfer.state);
             if (root.activeTransfer.state === ContentTransfer.Charged) {
-                pageStack.pop()
+                pageStack.pop(root)
 
                 var fileUrls = []
                 for (var i = 0; i < root.activeTransfer.items.length; i++)

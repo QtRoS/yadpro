@@ -8,6 +8,7 @@
         <file>qml/pages/FolderView.qml</file>
         <file>qml/pages/LoginPage.qml</file>
         <file>qml/pages/OptionsPage.qml</file>
+        <file>qml/pages/AdaptivePage.qml</file>
         <file>qml/utils/DataBase.js</file>
         <file>qml/utils/JsModule.js</file>
         <file>qml/Bridge.qml</file>
@@ -20,7 +21,6 @@
         <file>qml/popups/RenameDialog.qml</file>
         <file>qml/popups/SaveToDiskDialog.qml</file>
         <file>qml/popups/SignOutDialog.qml</file>
-        <file>qml/popups/TransferDialog.qml</file>
         <file>qml/components/PreviewNotificationBar.qml</file>
         <file>qml/content/contenttyperesolver.js</file>
         <file>qml/content/OpenWithPage.qml</file>

@@ -23,13 +23,16 @@ import Ubuntu.Components 1.3
 import "../utils/JsModule.js" as JS
 
 
-Page {
+AdaptivePage {
+    id: transferMonitorPage
 
     header: PageHeader {
         id: pageHeader
         title: i18n.tr("Transfer monitor")
         flickable: simpleList
     }
+
+    visible: false
 
     ListView {
         id: simpleList
@@ -72,7 +75,7 @@ Page {
                                 hubListener.exportTransfer = null
                             } else {
                                 pageStack.push(Qt.resolvedUrl("../content/OpenWithPage.qml"),
-                                               { "fileUrl" : ("file://" + model.localUrl) } )
+                                               { "fileUrl" : ("file://" + model.localUrl) }, transferMonitorPage )
                             }
                         }
                     }

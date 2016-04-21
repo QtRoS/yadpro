@@ -2,9 +2,12 @@ import QtQuick 2.4
 import Ubuntu.Components 1.3
 import Ubuntu.Content 1.1
 
+import "../pages"
+
 import "contenttyperesolver.js" as ContentTypeResolver
 
-Page {
+
+AdaptivePage {
     id: root
     title: i18n.tr("Open with")
 
@@ -41,11 +44,11 @@ Page {
         onPeerSelected: {
             root.activeTransfer = peer.request()
             root.__exportItemsWhenPossible(root.fileUrl)
-            pageStack.pop()
+            pageStack.pop(root)
         }
 
         onCancelPressed: {
-            pageStack.pop();
+            pageStack.pop(root)
         }
     }
 

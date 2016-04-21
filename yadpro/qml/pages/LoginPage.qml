@@ -22,8 +22,19 @@ import Ubuntu.Web 0.2
 import "../"
 
 
-Page {
+AdaptivePage {
     id: pageItself
+
+    header: PageHeader {
+        id: pageHeader
+        title: i18n.tr("Log in")
+        trailingActionBar.actions: [
+            Action {
+                iconName: "go-to"
+                onTriggered: if (!testRequestInProgress) login()
+            }
+        ]
+    }
 
     signal authPassed(string token)
 
@@ -53,17 +64,6 @@ Page {
     function showWebview(url) {
         tokenWebView.url = url
         tokenWebView.visible = true
-    }
-
-    header: PageHeader {
-        id: pageHeader
-        title: i18n.tr("Log in")
-        trailingActionBar.actions: [
-            Action {
-                iconName: "go-to"
-                onTriggered: if (!testRequestInProgress) login()
-            }
-        ]
     }
 
     Component.onCompleted: login()

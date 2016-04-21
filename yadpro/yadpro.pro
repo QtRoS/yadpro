@@ -23,12 +23,12 @@ OTHER_FILES +=  yadpro.apparmor \
                 qml/components/ActionWithCallback.qml \
                 qml/components/MiniProgressBar.qml \
                 qml/components/OptKeep.qml \
+                qml/pages/AdaptivePage.qml
                 qml/pages/LoginPage.qml \
                 qml/pages/OptionsPage.qml \
                 qml/pages/FolderView.qml \
                 qml/popups/CreateFolderDialog.qml \
                 qml/popups/SaveToDiskDialog.qml \
-                qml/popups/TransferDialog.qml \
                 qml/popups/RenameDialog.qml \
                 qml/popups/AboutDialog.qml \
                 qml/popups/DeleteDialog.qml \
@@ -54,6 +54,7 @@ OTHER_FILES +=  yadpro.apparmor \
     qml/components/RadialBottomEdge.qml
 
 
+
 #specify where the config files are installed to
 config_files.path = /yadpro
 config_files.files += $${OTHER_FILES}
@@ -68,4 +69,6 @@ HEADERS += \
     networkmanager.h \
     previewcache.h \
     cpputils.h
+
+
 
