@@ -23,7 +23,7 @@ OTHER_FILES +=  yadpro.apparmor \
                 qml/components/ActionWithCallback.qml \
                 qml/components/MiniProgressBar.qml \
                 qml/components/OptKeep.qml \
-                qml/pages/AdaptivePage.qml
+                qml/pages/AdaptivePage.qml \
                 qml/pages/LoginPage.qml \
                 qml/pages/OptionsPage.qml \
                 qml/pages/FolderView.qml \
