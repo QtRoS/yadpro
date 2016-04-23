@@ -181,12 +181,6 @@ AdaptivePage {
     ListView {
         id: simpleList
 
-//        anchors {
-//            top: pageHeader.bottom
-//            left: parent.left
-//            right: parent.right
-//            bottom: parent.bottom
-//        }
         anchors.fill: parent
         model: trashBridge.folderModel
 
@@ -216,10 +210,6 @@ AdaptivePage {
                 simpleList.currentIndex = index
                 if (isFolder)
                     trashBridge.slotMoveToFolder(model.displayName)
-//                else if (isTransferInProgress) {
-//                    selectedItem = model
-//                    trashBridge.slotDownload(selectedItem.href, selectedItem.displayName)
-//                }
             }
         }
     } // ListView
@@ -242,14 +232,6 @@ AdaptivePage {
         focus: true
         clip: true
 
-//        header: MyComponents.GridDelegate {
-//            property bool isActive: !JS.isRootPath(trashBridge.currentFolder)
-//            text: ".."
-//            iconSource: "/img/qml/images/folder.png"
-//            onClicked: if (isActive) trashBridge.slotOneLevelBack()
-//            opacity: isActive ? 1 : 0.4
-//        }
-
         delegate: MyComponents.GridDelegate {
             text: model.displayName
             iconSource: model.iconSource
@@ -260,10 +242,6 @@ AdaptivePage {
             onClicked: {
                 if (isFolder)
                     trashBridge.slotMoveToFolder(model.displayName)
-//                else if (isTransferInProgress) {
-//                    selectedItem = model
-//                    trashBridge.slotDownload(selectedItem.href, selectedItem.displayName)
-//                }
             }
 
             onContextMenuRequested: {
@@ -309,17 +287,7 @@ AdaptivePage {
             if (jobResult.isError) {
                 showInfoBanner(JSON.stringify(jobResult),
                                i18n.tr("An error has occurred"))
-            } else { // TODO Bug
-                if (jobResult.code == "diskInformation") {
-                    var r = jobResult.response
-                    var message = i18n.tr("Total space: %1\nUsed space: %2\nTrash size: %3")
-                    .arg(JS.decorateFileSize(r.total_space))
-                    .arg(JS.decorateFileSize(r.used_space))
-                    .arg(JS.decorateFileSize(r.trash_size))
-
-                    showInfoBanner(message, i18n.tr("Disk information"))
-                }
-            } // else
+            }
         } // jobDone
     }
 }
