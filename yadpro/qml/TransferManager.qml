@@ -187,7 +187,7 @@ Item {
             if (jobResult.code == "download") {
                 if (jobResult.isError) {
                     d.changeDownloadState(JS.STATE_ERROR)
-                } else {
+                } else if (!jobResult.meta) {
                     d.currentDownload.operationUrl = jobResult.href
                     d.changeDownloadState(JS.STATE_URLRECEIVED)
                 }

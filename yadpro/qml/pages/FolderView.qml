@@ -64,8 +64,12 @@ AdaptivePage {
                         null, { "text" : text, "title" : title} )
     }
 
-    function uploadFiles(filesToUpload) {
-        addTransfer(filesToUpload, true)
+//    function uploadFiles(filesToUpload) {
+//        addTransfer(filesToUpload, true)
+//    }
+
+    function rawDownload(file) {
+        bridge.slotDownload(file, { "isRaw" : true } )
     }
 
     function addTransfer(files, isUpload) {
@@ -272,7 +276,9 @@ AdaptivePage {
             }
 
             function download() {
-                addTransfer([selectedItem.href])
+                if (optKeep.useExternalDownloader)
+                    rawDownload(selectedItem.href)
+                else addTransfer([selectedItem.href])
             }
 
             function copy() {
@@ -481,6 +487,8 @@ AdaptivePage {
                     .arg(JS.decorateFileSize(r.trash_size))
 
                     showInfoBanner(message, i18n.tr("Disk information"))
+                } else if (jobResult.code == "download" && jobResult.meta) {
+                    Qt.openUrlExternally(jobResult.href)
                 }
             } // else
         } // jobDone

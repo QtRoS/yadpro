@@ -169,7 +169,8 @@ QtObject {
             console.log("__makeRequest", request, code, method)
 
         var doc = new XMLHttpRequest()
-        var task = {"code" : code, "doc" : doc, "id" : __requestIdCounter++}
+        var task = {"code" : code, "doc" : doc, "id" : __requestIdCounter++,
+            "setMeta" : function(key, meta) { this[key] = meta; return this; }}
 
         doc.onreadystatechange = function() {
             if (doc.readyState === XMLHttpRequest.DONE) {

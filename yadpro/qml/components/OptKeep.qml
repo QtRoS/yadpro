@@ -7,6 +7,7 @@ QtObject {
     property bool useGridView
     property bool showTransferManager
     property bool downloadPreviews
+    property bool useExternalDownloader
     property string sortOrder
     property string token
 
@@ -17,6 +18,7 @@ QtObject {
         sortOrder = getSortOrder()
         token = getToken()
         downloadPreviews = getDownloadPreviews()
+        useExternalDownloader = getUseExternalDownloader()
     }
 
     onShowFileTimeChanged: {
@@ -41,6 +43,10 @@ QtObject {
 
     onDownloadPreviewsChanged: {
         setDownloadPreviews(downloadPreviews)
+    }
+
+    onUseExternalDownloaderChanged: {
+        setUseExternalDownloader(useExternalDownloader)
     }
 
     function getUseGridView() {
@@ -109,11 +115,22 @@ QtObject {
 
     }
 
+    function getUseExternalDownloader() {
+        return settings.useExternalDownloader
+    }
+
+    function setUseExternalDownloader(value) {
+        var cont = settings
+        cont.useExternalDownloader = value
+    }
+
+
     property Settings settings: Settings {
         property bool showFileTime: true
         property bool useGridView: true
         property bool showTransferManager: true
         property bool downloadPreviews: true
+        property bool useExternalDownloader: false
         property string sortOrder: "name"
         property string token: ""
     }

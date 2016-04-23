@@ -61,8 +61,8 @@ BaseBridge {
         __addTask(yadApi.unpublish(path))
     }
 
-    function slotDownload(path) {
-        __addTask(yadApi.download(path))
+    function slotDownload(path, meta) {
+        __addTask(yadApi.download(path).setMeta("meta", meta))
     }
 
     function slotUpload(path) {
@@ -170,6 +170,9 @@ BaseBridge {
             {
                 if (resObj.response.href) {
                     jobResult.href = resObj.response.href
+                }
+                if (resObj.task.meta) {
+                    jobResult.meta = resObj.task.meta
                 }
             }
             break;

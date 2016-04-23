@@ -15,6 +15,7 @@ QtObject {
             @ response
                 !status
                 !statusText
+            @meta
      */
     signal jobDone(var jobResult)
 

@@ -42,6 +42,7 @@ AdaptivePage {
         swUseGridView.checked = optKeep.useGridView
         swShowFileTime.checked = optKeep.showFileTime
         swDownloadPreviews.checked = optKeep.downloadPreviews
+        chbUseExternalDownloader.checked = optKeep.useExternalDownloader
         isSortOrder.selectItemByValue(optKeep.sortOrder)
 
         pageItself.preventSave = false
@@ -129,6 +130,25 @@ AdaptivePage {
                         return
 
                     optKeep.showTransferManager = checked
+                }
+            }
+        }
+
+        ListItem.Standard {
+            id: useExtListItem
+
+            text: i18n.tr("Use external downloader")
+            width: parent.width
+            control: Switch {
+                id: chbUseExternalDownloader
+
+                anchors.right: parent.right
+
+                onCheckedChanged: {
+                    if (pageItself.preventSave)
+                        return
+
+                    optKeep.useExternalDownloader = checked
                 }
             }
         }

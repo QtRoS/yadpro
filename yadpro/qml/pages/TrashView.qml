@@ -35,6 +35,33 @@ AdaptivePage {
     header: PageHeader {
         id: pageHeader
         title: i18n.tr("Trash")
+
+        trailingActionBar.actions: [
+            Action {
+                iconName: "edit"
+                onTriggered: {
+                    PopupUtils.open(trashMenuComponent, null)
+                }
+            },
+            Action {
+                iconName: trashBridge.isBusy ? "close" : "reload"
+                onTriggered: {
+                    if (trashBridge.isBusy)
+                        trashBridge.slotAbort()
+                    else trashBridge.slotUpdate()
+                }
+            }
+        ]
+
+        ActivityIndicator{
+            running: trashBridge.isBusy
+            visible: trashBridge.isBusy
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: units.gu(10)
+            }
+        }
     }
 
     Component.onCompleted: {
@@ -59,28 +86,11 @@ AdaptivePage {
                         null, { "text" : text, "title" : title} )
     }
 
-    head.actions: [
-        Action {
-            iconName: trashBridge.isBusy ? "close" : "reload"
-            onTriggered: {
-                if (trashBridge.isBusy)
-                    trashBridge.slotAbort()
-                else trashBridge.slotUpdate()
-            }
-        },
-        Action {
-            iconName: "edit"
-            onTriggered: {
-                PopupUtils.open(mainMenuComponent, null)
-            }
-        }
-    ]
-
     Component {
-        id: mainMenuComponent
+        id: trashMenuComponent
 
         ActionSelectionPopover {
-            id: mainMenuPopover
+            id: trashMenuPopover
 
             actions: ActionList {
                 id: popoverActionsList
@@ -107,7 +117,6 @@ AdaptivePage {
                 Action {
                     text: i18n.tr("Options...")
                     onTriggered: {
-                        optionsPage.updateInfoFromOptions()
                         pageStack.push(Qt.resolvedUrl("./OptionsPage.qml"), { }, trashView)
                     }
                 }
@@ -172,6 +181,12 @@ AdaptivePage {
     ListView {
         id: simpleList
 
+//        anchors {
+//            top: pageHeader.bottom
+//            left: parent.left
+//            right: parent.right
+//            bottom: parent.bottom
+//        }
         anchors.fill: parent
         model: trashBridge.folderModel
 
@@ -201,10 +216,10 @@ AdaptivePage {
                 simpleList.currentIndex = index
                 if (isFolder)
                     trashBridge.slotMoveToFolder(model.displayName)
-                else if (isTransferInProgress) {
-                    selectedItem = model
-                    trashBridge.slotDownload(selectedItem.href, selectedItem.displayName)
-                }
+//                else if (isTransferInProgress) {
+//                    selectedItem = model
+//                    trashBridge.slotDownload(selectedItem.href, selectedItem.displayName)
+//                }
             }
         }
     } // ListView
@@ -213,7 +228,7 @@ AdaptivePage {
         id: gridView
 
         anchors {
-            top: parent.top
+            top: pageHeader.bottom
             bottom: parent.bottom
         }
 
@@ -245,10 +260,10 @@ AdaptivePage {
             onClicked: {
                 if (isFolder)
                     trashBridge.slotMoveToFolder(model.displayName)
-                else if (isTransferInProgress) {
-                    selectedItem = model
-                    trashBridge.slotDownload(selectedItem.href, selectedItem.displayName)
-                }
+//                else if (isTransferInProgress) {
+//                    selectedItem = model
+//                    trashBridge.slotDownload(selectedItem.href, selectedItem.displayName)
+//                }
             }
 
             onContextMenuRequested: {
@@ -286,12 +301,6 @@ AdaptivePage {
         visible: trashBridge.folderModel.count == 0
     } // Label
 
-    ActivityIndicator{
-        running: trashBridge.isBusy
-        visible: trashBridge.isBusy
-        anchors.centerIn: parent
-    }
-
     MyComponents.PreviewNotificationBar { }
 
     Connections {
@@ -300,7 +309,7 @@ AdaptivePage {
             if (jobResult.isError) {
                 showInfoBanner(JSON.stringify(jobResult),
                                i18n.tr("An error has occurred"))
-            } else {
+            } else { // TODO Bug
                 if (jobResult.code == "diskInformation") {
                     var r = jobResult.response
                     var message = i18n.tr("Total space: %1\nUsed space: %2\nTrash size: %3")

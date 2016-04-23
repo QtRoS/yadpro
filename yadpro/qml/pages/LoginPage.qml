@@ -53,7 +53,7 @@ AdaptivePage {
         if (token) {
             /* Making test request. */
             testYadApi.accessToken = token
-            testYadApi.getMetaData()
+            testYadApi.diskInformation()
 
             testRequestInProgress = true
         } else {

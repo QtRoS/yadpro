@@ -18,7 +18,7 @@ AdaptivePage {
         // console.log("finishSelection", filesToUpload, selectionCallback)
         if (selectionCallback)
             selectionCallback(filesToUpload)
-        else predecessor.uploadFiles(filesToUpload)
+        else predecessor.addTransfer(filesToUpload, true)
     }
 
     ContentPeerPicker {
