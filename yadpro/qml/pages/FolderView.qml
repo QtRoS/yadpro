@@ -492,7 +492,5 @@ AdaptivePage {
                 }
             } // else
         } // jobDone
-
-        // onOperationProgress: miniProgress.progress = progress
     }
 }

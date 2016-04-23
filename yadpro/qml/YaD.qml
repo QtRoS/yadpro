@@ -59,7 +59,7 @@ MainView {
 
         function currentPageChangeHandler(page) {
             if (page) {
-                console.log("PageStack onCurrentPageChanged", page.header.title)
+                console.log("PageStack onCurrentPageChanged", page.header ? page.header.title : page.title)
                 if (page.reloadPageContent)
                     page.reloadPageContent()
             }

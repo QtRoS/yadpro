@@ -29,13 +29,20 @@ Dialog {
 
     Item {
         height: units.gu(8)
-        Image {
-            asynchronous: true
-            sourceSize.width: units.gu(8)
-            sourceSize.height: units.gu(8)
-            source: "/img/qml/images/splashScreen.png"
+
+        UbuntuShape {
+            image: Image {
+                asynchronous: true
+                sourceSize.width: units.gu(8)
+                sourceSize.height: units.gu(8)
+                source: "/img/qml/images/splashScreen.png"
+            }
+            width: image.width
+            height: image.height
             anchors.centerIn: parent
         }
+
+
     }
 
     Button {
