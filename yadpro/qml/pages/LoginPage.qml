@@ -28,6 +28,9 @@ AdaptivePage {
     header: PageHeader {
         id: pageHeader
         title: i18n.tr("Log in")
+
+        leadingActionBar.actions: [ ]
+
         trailingActionBar.actions: [
             Action {
                 iconName: "go-to"
@@ -84,7 +87,12 @@ AdaptivePage {
     WebView {
         id: tokenWebView
 
-        anchors.fill: parent
+        anchors {
+            top: pageHeader.bottom
+            right: parent.right
+            bottom: parent.bottom
+            left: parent.left
+        }
         visible: false
         onUrlChanged: {
             var url_string = url.toString()

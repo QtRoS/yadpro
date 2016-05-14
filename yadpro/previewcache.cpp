@@ -5,11 +5,9 @@ Q_LOGGING_CATEGORY(PrevCache, "PreviewCache")
 
 PreviewCache::PreviewCache(QObject *parent) :
     QObject(parent),
-    m_isBusy(false)
-{
-    m_cacheLoc = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/";
-    qCDebug(PrevCache) << "Cache location:" << m_cacheLoc;
-}
+    m_isBusy(false),
+    m_reply(0)
+{ }
 
 PreviewCache::~PreviewCache()
 { }
@@ -23,13 +21,13 @@ QString PreviewCache::getByPreview(const QString &preview,  bool downloadOnMiss)
     {
         QString ret = m_hash[preview];
         if (!ret.isEmpty())
-            return QStringLiteral("file:/") + m_cacheLoc + ret;
+            return QStringLiteral("file:/") + cacheLocation() + QDir::separator() + ret;
     }
 
     // --------------- Second way - file                    ---------------- //
 
     QString md5 = QCryptographicHash::hash(preview.toLatin1(), QCryptographicHash::Md5).toHex();
-    QString previewPath = m_cacheLoc + md5;
+    QString previewPath = cacheLocation() + QDir::separator() + md5;
 
     QFileInfo fi(previewPath);
     if (fi.exists() && fi.size() > 0 )
@@ -94,6 +92,22 @@ void PreviewCache::downloadNext()
         qCWarning(PrevCache) << "File '" + item.localPath + "' can't be opened:" << m_file.errorString() << m_file.error();
 
     makeRequest(item.url);
+}
+
+QString PreviewCache::cacheLocation() const
+{
+    static QString cacheLocation;
+
+    if (cacheLocation.isEmpty())
+    {
+        cacheLocation = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + QStringLiteral("/Previews");
+
+        if (!QDir(cacheLocation).exists() && !QDir().mkdir(cacheLocation))
+            qCCritical(PrevCache) << "Can't create directory for previews:" << cacheLocation;
+        else qCDebug(PrevCache) << "Cache location:" << cacheLocation;
+    }
+
+    return cacheLocation;
 }
 
 void PreviewCache::slotError(QNetworkReply::NetworkError code)

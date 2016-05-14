@@ -26,7 +26,7 @@ import "./components"
 
 MainView {
     objectName: "mainView"
-    applicationName: "yadpro"
+    applicationName: "yadpro.mrqtros"
     
     width: units.gu(50)
     height: units.gu(75)

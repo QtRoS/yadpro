@@ -57,11 +57,11 @@ private slots:
 private:
     void makeRequest(const QString& url);
     void downloadNext();
+    QString cacheLocation() const;
 
     QNetworkAccessManager m_manager;
     QString m_token;
 
-    QString m_cacheLoc;
     QHash<QString, QString> m_hash; // <PreviewUrl, MD5>
     bool m_isBusy;
 
