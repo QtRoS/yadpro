@@ -9,7 +9,11 @@ import "contenttyperesolver.js" as ContentTypeResolver
 
 AdaptivePage {
     id: root
-    title: i18n.tr("Open with")
+
+    header: PageHeader {
+        id: pageHeader
+        title: i18n.tr("Open with")
+    }
 
     property var activeTransfer
     property string fileUrl

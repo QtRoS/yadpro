@@ -9,6 +9,11 @@ import "../utils/JsModule.js" as JS
 AdaptivePage {
     id: root
 
+    header: PageHeader {
+        id: pageHeader
+        title: i18n.tr("Import")
+    }
+
     property var activeTransfer
     property list<ContentPeer> peers
 
