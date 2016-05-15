@@ -39,7 +39,7 @@ AdaptivePage {
 
     ContentPeerPicker {
         id: peerPicker
-        showTitle: false
+        showTitle: true
 
         // Type of handler: Source, Destination, or Share
         handler: ContentHandler.Destination
