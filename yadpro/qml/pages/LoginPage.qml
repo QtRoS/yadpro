@@ -100,7 +100,7 @@ AdaptivePage {
             if (url_string.indexOf("https://oauth.yandex.ru/authorize") == 0) {
                 // SKIP
             } else if (url_string.indexOf("https://oauth.yandex.ru/verification_code") == 0) {
-                var match = /access_token=([a-zA-Z0-9]+)/.exec(url_string)
+                var match = /access_token=([a-zA-Z0-9_\-]+)/.exec(url_string)
                 if (match) {
                     authPassed(match[1])
                 }
