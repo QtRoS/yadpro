@@ -34,7 +34,7 @@ var TRANSFER_UPLOAD = "upload"
 
 function decorateFileSize(size) {
     if (!size)
-        return "0b"
+        return "directory"
 
     var iter = 0
 
