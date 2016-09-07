@@ -25,8 +25,8 @@ BaseBridge {
         if (JS.isRootPath(currentFolder) || isBusy)
             return
 
-        var slashIndex = currentFolder.lastIndexOf("/")
-        var targetPath = currentFolder.substring(0, slashIndex)
+        var targetPath = currentFolder.substring(0, currentFolder.lastIndexOf("/"))
+        targetPath = targetPath.length < JS.ROOT_PATH.length ? JS.ROOT_PATH : targetPath
 
         //console.log("slotOneLevelBack", targetPath)
 
