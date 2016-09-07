@@ -12,5 +12,5 @@
     },
     "version": "2.4.7",
     "maintainer": "Roman Shchekin <mrqtros@gmail.com>",
-    "framework": "ubuntu-sdk-15.04.1"
+    "framework": "ubuntu-sdk-15.04.4"
 }

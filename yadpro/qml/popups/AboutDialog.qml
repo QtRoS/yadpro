@@ -24,8 +24,10 @@ import "../popups"
 
 Dialog {
     id: aboutDialog
+
+    property string version: "v2.4.7"
     title: i18n.tr("<font color='#dd4814'>YaD Pro</font>")
-    text: i18n.tr("Unofficial <font color='#dd4814'>Ubuntu Phone</font> client of <br><a href='http://disk.yandex.com/'>Yandex.Disk</a> free file storage service<br> developed by Roman Shchekin <br> aka <font color='#dd4814'>QtRoS</font><br>mrqtros@gmail.com") + "<br>v2.4.5"
+    text: i18n.tr("Unofficial <font color='#dd4814'>Ubuntu Phone</font> client of <br><a href='http://disk.yandex.com/'>Yandex.Disk</a> free file storage service<br> developed by Roman Shchekin <br> aka <font color='#dd4814'>QtRoS</font><br>mrqtros@gmail.com<br>") + version
 
     Item {
         height: units.gu(8)
